@@ -93,6 +93,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ user, profile, isOp
     setIsSaving(true);
 
     const updateData = {
+      id: user.id, // Adicionado o ID do usuário para a operação upsert
       first_name: firstName,
       last_name: lastName,
       avatar_url: avatarUrl,
@@ -102,15 +103,15 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ user, profile, isOp
     console.log('Attempting to save profile for user ID:', user.id);
     console.log('Data being sent:', updateData);
 
+    // Usar upsert para criar ou atualizar o perfil
     const { error } = await supabase
       .from('profiles')
-      .update(updateData)
-      .eq('id', user.id);
+      .upsert(updateData, { onConflict: 'id' }); // Especificar a coluna de conflito
 
     setIsSaving(false);
     if (error) {
       showError(`Falha ao salvar as alterações: ${error.message}`);
-      console.error('Supabase update error:', error);
+      console.error('Supabase upsert error:', error);
     } else {
       showSuccess('Perfil atualizado com sucesso!');
       onSave();
