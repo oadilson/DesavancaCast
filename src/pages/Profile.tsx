@@ -5,13 +5,15 @@ import { User } from '@supabase/supabase-js';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, Loader2, User as UserIcon, Mail, Calendar, Podcast, Settings, Edit } from 'lucide-react';
+import { LogOut, Loader2, User as UserIcon, Mail, Calendar, Podcast, Settings, Edit, Heart, Download, History } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Layout from '@/components/Layout';
 import EditProfileModal from '@/components/EditProfileModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from '@tanstack/react-query';
 import { getPodcastByUserId } from '@/data/podcastData';
+import { useLikedEpisodes } from '@/hooks/use-liked-episodes';
+import { useDownloadContext } from '@/context/DownloadContext';
 
 interface ProfileData {
   first_name: string | null;
@@ -31,6 +33,9 @@ const Profile: React.FC = () => {
     queryFn: () => getPodcastByUserId(user!.id),
     enabled: !!user, // Only run query if user exists
   });
+
+  const { likedEpisodeIds, isLoading: isLoadingLiked } = useLikedEpisodes();
+  const { downloadedEpisodes, isLoading: isLoadingDownloads } = useDownloadContext();
 
   const fetchUserData = useCallback(async () => {
     setLoading(true);
@@ -75,7 +80,7 @@ const Profile: React.FC = () => {
     // queryClient.invalidateQueries(['userPodcast', user?.id]);
   };
 
-  if (loading) {
+  if (loading || isLoadingLiked || isLoadingDownloads) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-full">
@@ -126,30 +131,75 @@ const Profile: React.FC = () => {
             </div>
           </CardHeader>
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-podcast-black mx-auto rounded-none border-t border-b border-podcast-border">
+            <TabsList className="grid w-full grid-cols-3 bg-podcast-black mx-auto rounded-none border-t border-b border-podcast-border">
               <TabsTrigger value="overview" className="data-[state=active]:bg-podcast-black-light data-[state=active]:text-podcast-green rounded-tl-xl">Visão Geral</TabsTrigger>
+              <TabsTrigger value="activity" className="data-[state=active]:bg-podcast-black-light data-[state=active]:text-podcast-green">Minha Atividade</TabsTrigger>
               <TabsTrigger value="podcast" className="data-[state=active]:bg-podcast-black-light data-[state=active]:text-podcast-green rounded-tr-xl">Meu Podcast</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="p-4 sm:p-6">
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-podcast-white">Detalhes da Conta</h3>
-                  <div className="flex items-center">
-                    <UserIcon className="h-5 w-5 text-podcast-green mr-3" />
-                    <span className="text-podcast-gray">Nome:</span>
-                    <span className="ml-auto font-medium">{fullName}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Mail className="h-5 w-5 text-podcast-green mr-3" />
-                    <span className="text-podcast-gray">E-mail:</span>
-                    <span className="ml-auto font-medium">{user.email}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar className="h-5 w-5 text-podcast-green mr-3" />
-                    <span className="text-podcast-gray">Membro desde:</span>
-                    <span className="ml-auto font-medium">{new Date(user.created_at).toLocaleDateString('pt-BR')}</span>
+                  <h3 className="text-lg font-semibold text-podcast-white mb-4">Detalhes da Conta</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center p-3 bg-podcast-border/20 rounded-lg">
+                      <UserIcon className="h-5 w-5 text-podcast-green mr-3" />
+                      <span className="text-podcast-gray">Nome:</span>
+                      <span className="ml-auto font-medium text-podcast-white">{fullName}</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-podcast-border/20 rounded-lg">
+                      <Mail className="h-5 w-5 text-podcast-green mr-3" />
+                      <span className="text-podcast-gray">E-mail:</span>
+                      <span className="ml-auto font-medium text-podcast-white">{user.email}</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-podcast-border/20 rounded-lg">
+                      <Calendar className="h-5 w-5 text-podcast-green mr-3" />
+                      <span className="text-podcast-gray">Membro desde:</span>
+                      <span className="ml-auto font-medium text-podcast-white">{new Date(user.created_at).toLocaleDateString('pt-BR')}</span>
+                    </div>
                   </div>
                 </div>
+              </div>
+            </TabsContent>
+            <TabsContent value="activity" className="p-4 sm:p-6">
+              <div className="space-y-6">
+                <h3 className="text-lg font-semibold text-podcast-white mb-4">Minha Atividade</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Card className="bg-podcast-border/20 border-podcast-border text-podcast-white">
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Heart className="h-6 w-6 text-red-500 mr-3" />
+                        <span className="text-lg font-medium">Episódios Curtidos</span>
+                      </div>
+                      <span className="text-2xl font-bold text-podcast-green">{likedEpisodeIds.size}</span>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-podcast-border/20 border-podcast-border text-podcast-white">
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div className="flex items-center">
+                        <Download className="h-6 w-6 text-blue-400 mr-3" />
+                        <span className="text-lg font-medium">Downloads</span>
+                      </div>
+                      <span className="text-2xl font-bold text-podcast-green">{downloadedEpisodes.length}</span>
+                    </CardContent>
+                  </Card>
+                </div>
+                <Card className="bg-podcast-border/20 border-podcast-border text-podcast-white">
+                  <CardHeader>
+                    <CardTitle className="flex items-center text-lg">
+                      <History className="h-5 w-5 text-podcast-green mr-2" />
+                      Reproduzidos Recentemente
+                    </CardTitle>
+                    <CardDescription className="text-podcast-gray">Seu histórico de reprodução aparecerá aqui.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center text-podcast-gray py-4">
+                      <p>Nenhum episódio reproduzido recentemente.</p>
+                      <Link to="/" className="text-podcast-green hover:underline mt-2 block">
+                        Comece a ouvir!
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </TabsContent>
             <TabsContent value="podcast" className="p-4 sm:p-6">
@@ -177,10 +227,15 @@ const Profile: React.FC = () => {
                   </div>
                 </Card>
               ) : (
-                <div className="text-center h-40 flex flex-col justify-center items-center">
+                <div className="text-center h-40 flex flex-col justify-center items-center bg-podcast-border/20 rounded-lg p-4">
                   <Podcast className="h-10 w-10 text-podcast-gray mb-2" />
-                  <p className="text-podcast-white">Você ainda não gerencia um podcast.</p>
-                  <p className="text-sm text-podcast-gray">Sincronize um feed RSS para começar.</p>
+                  <p className="text-podcast-white font-medium">Você ainda não gerencia um podcast.</p>
+                  <p className="text-sm text-podcast-gray mt-1">
+                    Se você é um criador, faça login como administrador para sincronizar seu feed RSS.
+                  </p>
+                  <Link to="/login" className="text-podcast-green hover:underline mt-3 block">
+                    Ir para Login
+                  </Link>
                 </div>
               )}
             </TabsContent>
