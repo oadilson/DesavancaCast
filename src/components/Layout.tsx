@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -11,7 +13,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="flex flex-col min-h-screen bg-podcast-black text-podcast-white pb-32"> {/* Aumentado para pb-32 */}
       <div className="flex flex-grow">
-        <aside className="hidden md:block w-64 flex-shrink-0 fixed top-0 left-0 h-screen">
+        <aside className="hidden md:block w-64 flex-shrink-0 fixed top-0 left-0 h-[calc(100vh-8rem)]"> {/* Ajustado para calc(100vh - 8rem) */}
           <Sidebar />
         </aside>
         <div className="flex flex-col flex-grow min-w-0 md:ml-64">
