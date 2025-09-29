@@ -123,7 +123,7 @@ const EpisodeDetail: React.FC = () => {
                 <CardDescription className="text-sm text-podcast-gray mb-4">
                   {new Date(episode.releaseDate).toLocaleDateString('pt-BR')} • {formatDuration(episode.duration)}
                 </CardDescription>
-                <p className="text-md text-podcast-white mb-4">{episode.description}</p>
+                {/* <p className="text-md text-podcast-white mb-4">{episode.description}</p> */} {/* REMOVIDO */}
                 <div className="flex items-center justify-center md:justify-start gap-4 mt-4">
                   <Button
                     className="bg-podcast-green text-podcast-black hover:opacity-90 rounded-full"
