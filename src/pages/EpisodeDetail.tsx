@@ -168,8 +168,7 @@ const EpisodeDetail: React.FC = () => {
             <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl p-6">
               <CardHeader className="pb-4 border-b border-podcast-border mb-6">
                 <CardTitle className="flex items-center gap-2 text-2xl">
-                  <Newspaper className="h-6 w-6 text-podcast-green" />
-                  Newsletter: {episode.title}
+                  {episode.title}
                 </CardTitle>
                 {episode.newsletter_subtitle && (
                   <CardDescription className="text-lg text-podcast-gray mt-1">
