@@ -47,16 +47,15 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     window.addEventListener('scroll', handleScroll);
 
     const fetchProfile = async (user: User) => {
-      const { data: profileData, error } = await supabase
+      const { data: profileDataArray, error } = await supabase // Alterado aqui
         .from('profiles')
         .select('first_name, last_name, avatar_url')
-        .eq('id', user.id)
-        .single();
+        .eq('id', user.id); // Removido .single()
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) { // Removido error.code !== 'PGRST116'
         console.error('Error fetching profile for header:', error);
       } else {
-        setProfile(profileData);
+        setProfile(profileDataArray?.[0] || null); // Pegar o primeiro item do array
       }
     };
 

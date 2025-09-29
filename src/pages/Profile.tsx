@@ -46,17 +46,16 @@ const Profile: React.FC = () => {
     if (user) {
       setUser(user);
       setIsAdmin(user.email === ADMIN_EMAIL); // Define o status de admin
-      const { data: profileData, error } = await supabase
+      const { data: profileDataArray, error } = await supabase // Alterado aqui
         .from('profiles')
         .select('first_name, last_name, avatar_url')
-        .eq('id', user.id)
-        .single();
+        .eq('id', user.id); // Removido .single()
 
-      if (error && error.code !== 'PGRST116') {
+      if (error) { // Removido error.code !== 'PGRST116'
         console.error('Error fetching profile:', error);
         showError('Não foi possível carregar os dados do perfil.');
       } else {
-        setProfile(profileData);
+        setProfile(profileDataArray?.[0] || null); // Pegar o primeiro item do array
       }
     } else {
       navigate('/login');
