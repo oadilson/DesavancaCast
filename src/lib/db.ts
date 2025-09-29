@@ -53,6 +53,27 @@ export const addEpisodeToDB = async (episode: Episode, audioBlob: Blob): Promise
   });
 };
 
+// Helper function to ensure the retrieved object is a proper Blob
+const ensureBlobInstance = (obj: any): Blob | undefined => {
+  if (obj instanceof Blob) {
+    return obj;
+  }
+  // If it's an object that looks like a Blob (has type and size), try to reconstruct it.
+  // This is a common workaround for IndexedDB deserialization quirks.
+  if (typeof obj === 'object' && obj !== null && 'type' in obj && 'size' in obj) {
+    try {
+      // Create a new Blob from the object. This works if the object's internal data
+      // is still accessible or if it's a Blob-like object that can be wrapped.
+      // Note: This might not work in all edge cases if the internal data is truly lost.
+      return new Blob([obj], { type: obj.type });
+    } catch (e) {
+      console.warn('Failed to reconstruct Blob from stored object:', e);
+      return undefined;
+    }
+  }
+  return undefined;
+};
+
 export const getDownloadedEpisodes = async (): Promise<StoredEpisode[]> => {
   const db = await initDB();
   return new Promise((resolve, reject) => {
@@ -61,7 +82,16 @@ export const getDownloadedEpisodes = async (): Promise<StoredEpisode[]> => {
     const request = store.getAll();
 
     request.onsuccess = () => {
-      resolve(request.result as StoredEpisode[]);
+      const results = request.result as StoredEpisode[];
+      const formattedResults = results.map(item => {
+        const audioBlob = ensureBlobInstance(item.audioBlob);
+        if (audioBlob) {
+          return { ...item, audioBlob };
+        }
+        console.warn('Skipping episode due to invalid audioBlob:', item.id);
+        return null; // Filter out items with invalid blobs
+      }).filter((item): item is StoredEpisode => item !== null); // Filter out nulls
+      resolve(formattedResults);
     };
     request.onerror = (event) => {
       console.error('Error getting episodes from DB:', (event.target as IDBRequest).error);
@@ -78,7 +108,16 @@ export const getDownloadedEpisode = async (id: string): Promise<StoredEpisode | 
         const request = store.get(id);
 
         request.onsuccess = () => {
-            resolve(request.result as StoredEpisode | undefined);
+            const result = request.result as StoredEpisode | undefined;
+            if (result && result.audioBlob) {
+                const audioBlob = ensureBlobInstance(result.audioBlob);
+                if (audioBlob) {
+                    resolve({ ...result, audioBlob });
+                    return;
+                }
+                console.warn('Retrieved episode has invalid audioBlob:', result.id);
+            }
+            resolve(undefined); // Resolve with undefined if episode or blob is invalid
         };
         request.onerror = (event) => {
             console.error('Error getting episode from DB:', (event.target as IDBRequest).error);
