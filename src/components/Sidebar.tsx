@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   const libraryItems = [
     { path: '/liked', label: 'Episódios Curtidos', icon: Heart },
     { path: '/downloads', label: 'Downloads', icon: Download },
-    { path: '/recent', label: 'Reproduzidos Recentemente', icon: History },
+    { path: '/recent', label: 'Recentes', icon: History }, // Alterado aqui
   ];
 
   return (
