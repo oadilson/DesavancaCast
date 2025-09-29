@@ -24,8 +24,6 @@ const Downloads: React.FC = () => {
   const handlePlayDownloaded = (episode: Episode) => {
     const storedEpisode = downloadedEpisodes.find(e => e.id === episode.id);
     if (storedEpisode && storedEpisode.audioBlob) {
-      console.log('Type of storedEpisode.audioBlob in Downloads:', typeof storedEpisode.audioBlob);
-      console.log('Is storedEpisode.audioBlob an instance of Blob in Downloads:', storedEpisode.audioBlob instanceof Blob);
       const localUrl = URL.createObjectURL(storedEpisode.audioBlob);
       playEpisode({ ...episode, audioUrl: localUrl });
     }
