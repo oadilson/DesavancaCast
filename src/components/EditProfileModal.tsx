@@ -86,22 +86,31 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ user, profile, isOp
   };
 
   const handleSave = async () => {
-    if (!user) return;
+    if (!user) {
+      showError('Usuário não autenticado. Por favor, faça login novamente.');
+      return;
+    }
     setIsSaving(true);
+
+    const updateData = {
+      first_name: firstName,
+      last_name: lastName,
+      avatar_url: avatarUrl,
+      updated_at: new Date().toISOString(),
+    };
+
+    console.log('Attempting to save profile for user ID:', user.id);
+    console.log('Data being sent:', updateData);
+
     const { error } = await supabase
       .from('profiles')
-      .update({
-        first_name: firstName,
-        last_name: lastName,
-        avatar_url: avatarUrl,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', user.id);
 
     setIsSaving(false);
     if (error) {
-      showError(`Falha ao salvar as alterações: ${error.message}`); // Mensagem de erro aprimorada
-      console.error(error);
+      showError(`Falha ao salvar as alterações: ${error.message}`);
+      console.error('Supabase update error:', error);
     } else {
       showSuccess('Perfil atualizado com sucesso!');
       onSave();
