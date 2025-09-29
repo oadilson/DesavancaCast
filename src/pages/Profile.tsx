@@ -15,6 +15,8 @@ import { getPodcastByUserId } from '@/data/podcastData';
 import { useLikedEpisodes } from '@/hooks/use-liked-episodes';
 import { useDownloadContext } from '@/context/DownloadContext';
 
+const ADMIN_EMAIL = 'adilsonsilva@outlook.com'; // Definir o email do administrador
+
 interface ProfileData {
   first_name: string | null;
   last_name: string | null;
@@ -27,11 +29,12 @@ const Profile: React.FC = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); // Novo estado para admin
 
   const { data: userPodcast, isLoading: isLoadingPodcast } = useQuery({
     queryKey: ['userPodcast', user?.id],
     queryFn: () => getPodcastByUserId(user!.id),
-    enabled: !!user, // Only run query if user exists
+    enabled: !!user && isAdmin, // Só executa a query se for admin
   });
 
   const { likedEpisodeIds, isLoading: isLoadingLiked } = useLikedEpisodes();
@@ -42,6 +45,7 @@ const Profile: React.FC = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       setUser(user);
+      setIsAdmin(user.email === ADMIN_EMAIL); // Define o status de admin
       const { data: profileData, error } = await supabase
         .from('profiles')
         .select('first_name, last_name, avatar_url')
@@ -131,10 +135,12 @@ const Profile: React.FC = () => {
             </div>
           </CardHeader>
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-podcast-black mx-auto rounded-none border-t border-b border-podcast-border">
+            <TabsList className={`grid w-full grid-cols-${isAdmin ? 3 : 2} bg-podcast-black mx-auto rounded-none border-t border-b border-podcast-border`}>
               <TabsTrigger value="overview" className="data-[state=active]:bg-podcast-black-light data-[state=active]:text-podcast-green rounded-tl-xl">Visão Geral</TabsTrigger>
               <TabsTrigger value="activity" className="data-[state=active]:bg-podcast-black-light data-[state=active]:text-podcast-green">Minha Atividade</TabsTrigger>
-              <TabsTrigger value="podcast" className="data-[state=active]:bg-podcast-black-light data-[state=active]:text-podcast-green rounded-tr-xl">Meu Podcast</TabsTrigger>
+              {isAdmin && (
+                <TabsTrigger value="podcast" className="data-[state=active]:bg-podcast-black-light data-[state=active]:text-podcast-green rounded-tr-xl">Meu Podcast</TabsTrigger>
+              )}
             </TabsList>
             <TabsContent value="overview" className="p-4 sm:p-6">
               <div className="grid grid-cols-1 gap-6">
@@ -202,43 +208,45 @@ const Profile: React.FC = () => {
                 </Card>
               </div>
             </TabsContent>
-            <TabsContent value="podcast" className="p-4 sm:p-6">
-              {isLoadingPodcast ? (
-                <div className="flex justify-center items-center h-40">
-                  <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
-                </div>
-              ) : userPodcast ? (
-                <Card className="bg-podcast-border/50 border-podcast-border overflow-hidden rounded-xl">
-                  <div className="flex flex-col md:flex-row">
-                    <img src={userPodcast.coverImage} alt={userPodcast.title} className="w-full md:w-48 h-48 object-cover" />
-                    <div className="p-4 flex flex-col">
-                      <h3 className="text-xl font-bold">{userPodcast.title}</h3>
-                      <p className="text-sm text-podcast-gray mt-1">por {userPodcast.host}</p>
-                      <p className="text-sm text-podcast-white mt-2 flex-grow line-clamp-3">{userPodcast.description}</p>
-                      <div className="mt-4 flex gap-2">
-                        <Link to="/admin">
-                          <Button className="bg-podcast-green text-podcast-black hover:opacity-90 rounded-full">
-                            <Settings className="mr-2 h-4 w-4" />
-                            Gerenciar
-                          </Button>
-                        </Link>
+            {isAdmin && (
+              <TabsContent value="podcast" className="p-4 sm:p-6">
+                {isLoadingPodcast ? (
+                  <div className="flex justify-center items-center h-40">
+                    <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
+                  </div>
+                ) : userPodcast ? (
+                  <Card className="bg-podcast-border/50 border-podcast-border overflow-hidden rounded-xl">
+                    <div className="flex flex-col md:flex-row">
+                      <img src={userPodcast.coverImage} alt={userPodcast.title} className="w-full md:w-48 h-48 object-cover" />
+                      <div className="p-4 flex flex-col">
+                        <h3 className="text-xl font-bold">{userPodcast.title}</h3>
+                        <p className="text-sm text-podcast-gray mt-1">por {userPodcast.host}</p>
+                        <p className="text-sm text-podcast-white mt-2 flex-grow line-clamp-3">{userPodcast.description}</p>
+                        <div className="mt-4 flex gap-2">
+                          <Link to="/admin">
+                            <Button className="bg-podcast-green text-podcast-black hover:opacity-90 rounded-full">
+                              <Settings className="mr-2 h-4 w-4" />
+                              Gerenciar
+                            </Button>
+                          </Link>
+                        </div>
                       </div>
                     </div>
+                  </Card>
+                ) : (
+                  <div className="text-center h-40 flex flex-col justify-center items-center bg-podcast-border/20 rounded-lg p-4">
+                    <Podcast className="h-10 w-10 text-podcast-gray mb-2" />
+                    <p className="text-podcast-white font-medium">Você ainda não gerencia um podcast.</p>
+                    <p className="text-sm text-podcast-gray mt-1">
+                      Se você é um criador, faça login como administrador para sincronizar seu feed RSS.
+                    </p>
+                    <Link to="/login" className="text-podcast-green hover:underline mt-3 block">
+                      Ir para Login
+                    </Link>
                   </div>
-                </Card>
-              ) : (
-                <div className="text-center h-40 flex flex-col justify-center items-center bg-podcast-border/20 rounded-lg p-4">
-                  <Podcast className="h-10 w-10 text-podcast-gray mb-2" />
-                  <p className="text-podcast-white font-medium">Você ainda não gerencia um podcast.</p>
-                  <p className="text-sm text-podcast-gray mt-1">
-                    Se você é um criador, faça login como administrador para sincronizar seu feed RSS.
-                  </p>
-                  <Link to="/login" className="text-podcast-green hover:underline mt-3 block">
-                    Ir para Login
-                  </Link>
-                </div>
-              )}
-            </TabsContent>
+                )}
+              </TabsContent>
+            )}
           </Tabs>
         </Card>
       </div>
