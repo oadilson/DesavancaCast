@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
-import { Auth } from '@supabase/auth-ui-react';
-import { ThemeSupa } from '@supabase/auth-ui-shared';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Podcast, Loader2 } from 'lucide-react';
 import { showSuccess, showError } from '@/utils/toast';
 import { Button } from '@/components/ui/button';
+import CustomSignInForm from '@/components/auth/CustomSignInForm';
+import CustomSignUpForm from '@/components/auth/CustomSignUpForm';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const initialView = searchParams.get('view') === 'sign_up' ? 'sign_up' : 'sign_in';
   const [authView, setAuthView] = useState<'sign_in' | 'sign_up'>(initialView);
-  const [loading, setLoading] = useState(false);
+  const [loadingAdminLogin, setLoadingAdminLogin] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -28,7 +27,7 @@ const Login: React.FC = () => {
   }, [navigate]);
 
   const handleAdminLogin = async () => {
-    setLoading(true);
+    setLoadingAdminLogin(true);
     const { error } = await supabase.auth.signInWithPassword({
       email: 'adilsonsilva@outlook.com',
       password: 'admin',
@@ -38,7 +37,7 @@ const Login: React.FC = () => {
       showError('Falha no login de admin. Verifique se o usuário adilsonsilva@outlook.com foi criado com a senha "admin".');
     }
     // O sucesso é tratado pelo onAuthStateChange
-    setLoading(false);
+    setLoadingAdminLogin(false);
   };
 
   return (
@@ -60,8 +59,8 @@ const Login: React.FC = () => {
           </p>
         </CardHeader>
         <CardContent className="p-6 pt-2">
-          <Button onClick={handleAdminLogin} disabled={loading} className="w-full mb-4 bg-podcast-purple hover:opacity-90">
-            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+          <Button onClick={handleAdminLogin} disabled={loadingAdminLogin} className="w-full mb-4 bg-podcast-purple hover:opacity-90">
+            {loadingAdminLogin ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
             Entrar como Administrador
           </Button>
           <div className="relative my-4">
@@ -74,91 +73,11 @@ const Login: React.FC = () => {
               </span>
             </div>
           </div>
-          <Auth
-            supabaseClient={supabase}
-            providers={[]}
-            view={authView}
-            localization={{
-              variables: {
-                sign_in: {
-                  email_label: 'E-mail',
-                  password_label: 'Senha',
-                  email_input_placeholder: 'seu@email.com',
-                  password_input_placeholder: 'Sua senha',
-                  button_label: 'Entrar',
-                  loading_button_label: 'Entrando...',
-                  link_text: 'Não tem uma conta? Cadastre-se',
-                },
-                sign_up: {
-                  email_label: 'E-mail',
-                  password_label: 'Senha',
-                  email_input_placeholder: 'seu@email.com',
-                  password_input_placeholder: 'Crie uma senha segura',
-                  button_label: 'Criar conta',
-                  loading_button_label: 'Criando conta...',
-                  confirmation_text: 'Verifique seu e-mail para o link de confirmação',
-                  link_text: 'Já tem uma conta? Entre',
-                },
-                forgotten_password: {
-                  email_label: 'E-mail',
-                  email_input_placeholder: 'seu@email.com',
-                  button_label: 'Enviar instruções',
-                  loading_button_label: 'Enviando...',
-                  link_text: 'Esqueceu sua senha?',
-                },
-              },
-            }}
-            appearance={{
-              theme: ThemeSupa,
-              variables: {
-                default: {
-                  colors: {
-                    brand: 'hsl(var(--podcast-green))',
-                    brandAccent: 'hsl(var(--podcast-purple))',
-                    inputBackground: 'hsl(var(--podcast-black-light))',
-                    inputBorder: 'hsl(var(--podcast-border))',
-                    inputBorderFocus: 'hsl(var(--podcast-green))',
-                    inputPlaceholder: 'hsl(var(--podcast-gray))',
-                    inputText: 'hsl(var(--podcast-white))',
-                    defaultButtonBackground: 'hsl(var(--podcast-green))',
-                    defaultButtonBackgroundHover: 'hsl(var(--podcast-green) / 0.8)',
-                    defaultButtonBorder: 'hsl(var(--podcast-green))',
-                    defaultButtonText: 'hsl(var(--podcast-black))',
-                    anchorTextColor: 'hsl(var(--podcast-green))',
-                    anchorTextHoverColor: 'hsl(149 71% 55%)',
-                  },
-                  space: {
-                    buttonPadding: '12px 16px',
-                    inputPadding: '12px 16px',
-                  },
-                  radii: {
-                    borderRadiusButton: '8px',
-                    inputBorderRadius: '8px',
-                  },
-                },
-              },
-              className: {
-                button: 'w-full font-semibold transition-all duration-200 hover:shadow-lg',
-                input: 'transition-all duration-200 focus:ring-2 focus:ring-podcast-green/30',
-                anchor: 'font-medium transition-colors duration-200',
-                divider: 'bg-podcast-border',
-                label: 'text-podcast-gray font-medium',
-              }
-            }}
-            theme="dark"
-            redirectTo={window.location.origin}
-            showLinks={false}
-          />
-          <div className="text-center mt-4">
-            <button
-              onClick={() => setAuthView(authView === 'sign_in' ? 'sign_up' : 'sign_in')}
-              className="text-sm font-medium text-podcast-green hover:text-green-400 transition-colors duration-200"
-            >
-              {authView === 'sign_in'
-                ? 'Não tem uma conta? Cadastre-se'
-                : 'Já tem uma conta? Entre'}
-            </button>
-          </div>
+          {authView === 'sign_in' ? (
+            <CustomSignInForm onSwitchToSignUp={() => setAuthView('sign_up')} />
+          ) : (
+            <CustomSignUpForm onSwitchToSignIn={() => setAuthView('sign_in')} />
+          )}
         </CardContent>
       </Card>
     </div>
