@@ -1,3 +1,20 @@
+-- Drop existing tables, functions, and triggers if they exist
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP FUNCTION IF EXISTS public.handle_new_user CASCADE;
+DROP FUNCTION IF EXISTS public.search_episodes CASCADE;
+DROP FUNCTION IF EXISTS public.get_popular_episodes CASCADE;
+DROP FUNCTION IF EXISTS public.get_unplayed_episodes CASCADE;
+
+DROP TABLE IF EXISTS public.liked_podcasts CASCADE;
+DROP TABLE IF EXISTS public.liked_episodes CASCADE;
+DROP TABLE IF EXISTS public.audio_trail_episodes CASCADE;
+DROP TABLE IF EXISTS public.audio_trails CASCADE;
+DROP TABLE IF EXISTS public.plays CASCADE;
+DROP TABLE IF EXISTS public.episodes CASCADE;
+DROP TABLE IF EXISTS public.podcasts CASCADE;
+DROP TABLE IF EXISTS public.profiles CASCADE;
+
+
 -- Create profiles table
 CREATE TABLE public.profiles (
     id uuid REFERENCES auth.users ON DELETE CASCADE NOT NULL PRIMARY KEY,
@@ -94,7 +111,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
