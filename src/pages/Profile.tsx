@@ -5,7 +5,7 @@ import { User } from '@supabase/supabase-js';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LogOut, Loader2, User as UserIcon, Mail, Calendar, Podcast, Settings } from 'lucide-react';
+import { LogOut, Loader2, User as UserIcon, Mail, Calendar, Podcast, Settings, Edit } from 'lucide-react';
 import { showError, showSuccess } from '@/utils/toast';
 import Layout from '@/components/Layout';
 import EditProfileModal from '@/components/EditProfileModal';
