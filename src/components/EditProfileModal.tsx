@@ -100,7 +100,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ user, profile, isOp
 
     setIsSaving(false);
     if (error) {
-      showError('Falha ao salvar as alterações.');
+      showError(`Falha ao salvar as alterações: ${error.message}`); // Mensagem de erro aprimorada
       console.error(error);
     } else {
       showSuccess('Perfil atualizado com sucesso!');
