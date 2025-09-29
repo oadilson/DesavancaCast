@@ -17,6 +17,7 @@ import { Loader2, X, GripVertical } from 'lucide-react';
 import { Episode } from '@/types/podcast';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandList, CommandItem } from "@/components/ui/command";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area"; // Importar ScrollArea
 
 interface AudioTrail {
   id?: string;
@@ -239,7 +240,11 @@ const AudioTrailFormModal: React.FC<AudioTrailFormModalProps> = ({ isOpen, onClo
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-          <Button onClick={handleSave} disabled={isSaving} className="bg-podcast-green text-podcast-black hover:opacity-90">
+          <Button 
+            onClick={handleSave} 
+            disabled={isSaving} 
+            className="bg-podcast-green text-podcast-black hover:opacity-90 disabled:bg-podcast-border disabled:text-podcast-white disabled:cursor-not-allowed"
+          >
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Salvar Trilha
           </Button>

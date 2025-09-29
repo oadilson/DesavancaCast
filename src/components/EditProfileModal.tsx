@@ -148,7 +148,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ user, profile, isOp
           </div>
           <DialogFooter>
             <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-            <Button onClick={handleSave} disabled={isSaving || isUploading} className="bg-podcast-green text-podcast-black hover:opacity-90">
+            <Button 
+              onClick={handleSave} 
+              disabled={isSaving || isUploading} 
+              className="bg-podcast-green text-podcast-black hover:opacity-90 disabled:bg-podcast-border disabled:text-podcast-white disabled:cursor-not-allowed"
+            >
               {(isSaving || isUploading) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Salvar Alterações
             </Button>
