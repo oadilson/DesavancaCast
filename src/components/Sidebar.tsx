@@ -55,7 +55,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   ];
 
   return (
-    <div className={cn("flex flex-col h-full bg-podcast-black text-podcast-gray px-8 py-36", className)}> {/* Ajustado px-4 para px-8 */}
+    <div className={cn("flex flex-col h-full bg-podcast-black text-podcast-gray px-8 py-4", className)}> {/* Ajustado py-36 para py-4 */}
       {/* O título do podcast foi movido para o Header */}
       <div className="mb-6">
         {/* Espaço reservado para o título que agora está no Header */}
