@@ -1,0 +1,1 @@
+CREATE POLICY "Enable delete for authenticated users on their own podcasts" ON public.podcasts FOR DELETE USING (auth.uid() = user_id);
