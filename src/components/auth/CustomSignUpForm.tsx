@@ -50,17 +50,9 @@ const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn })
     if (error) {
       showError(error.message);
     } else if (data.user) {
-      // Inserir o nome no perfil após o cadastro bem-sucedido
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .upsert({ id: data.user.id, first_name: values.firstName });
-
-      if (profileError) {
-        console.error('Erro ao salvar o nome no perfil:', profileError);
-        showError('Erro ao salvar seu nome. Por favor, atualize seu perfil mais tarde.');
-      } else {
-        showSuccess('Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.');
-      }
+      // O trigger 'handle_new_user' no Supabase já cuida da criação do perfil com o nome.
+      // Não precisamos fazer um upsert aqui.
+      showSuccess('Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.');
       onSwitchToSignIn(); // Redirecionar para o login após o cadastro
     }
     setIsLoading(false);
