@@ -2,7 +2,7 @@ import React from 'react';
 import { Episode } from '@/types/podcast';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Heart } from 'lucide-react';
+import { Play, Heart, Pause } from 'lucide-react'; // Importar Pause
 import { usePodcastPlayer } from '@/context/PodcastPlayerContext';
 import { formatDuration } from '@/lib/utils';
 import { useLikedEpisodes } from '@/hooks/use-liked-episodes';
@@ -14,7 +14,7 @@ interface EpisodeListProps {
 }
 
 const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, podcastCoverImage }) => {
-  const { playEpisode } = usePodcastPlayer();
+  const { playEpisode, currentEpisode, isPlaying } = usePodcastPlayer(); // Obter currentEpisode e isPlaying
   const { likedEpisodeIds, toggleLike, userId } = useLikedEpisodes();
   const navigate = useNavigate();
 
@@ -22,6 +22,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, podcastCoverImage }
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {episodes.map((episode) => {
         const isLiked = likedEpisodeIds.has(episode.id);
+        const isCurrentEpisodePlaying = isPlaying && currentEpisode?.id === episode.id; // Verificar se este episódio está tocando
         return (
           <Card
             key={episode.id}
@@ -41,7 +42,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, podcastCoverImage }
                     playEpisode(episode);
                   }}
                 >
-                  <Play className="h-6 w-6 ml-1" />
+                  {isCurrentEpisodePlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />} {/* Renderização condicional */}
                 </Button>
                 {userId && (
                   <Heart

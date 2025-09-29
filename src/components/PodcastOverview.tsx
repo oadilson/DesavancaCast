@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { getMyPodcast, getAudioTrails, getPopularEpisodes, getUnplayedEpisodes } from '@/data/podcastData';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings } from 'lucide-react';
+import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause } from 'lucide-react'; // Importar Pause
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePodcastPlayer } from '@/context/PodcastPlayerContext';
 import { formatDuration } from '@/lib/utils';
@@ -33,7 +33,7 @@ const PodcastOverview: React.FC = () => {
     queryFn: getAudioTrails,
   });
 
-  const { playEpisode } = usePodcastPlayer();
+  const { playEpisode, currentEpisode, isPlaying } = usePodcastPlayer(); // Obter currentEpisode e isPlaying
   const { likedEpisodeIds, toggleLike, userId } = useLikedEpisodes();
   const { isPodcastLiked, toggleLikePodcast } = useLikedPodcast(myPodcast?.id);
   const navigate = useNavigate();
@@ -339,6 +339,7 @@ const PodcastOverview: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {displayEpisodes.map((episode) => {
               const isLiked = likedEpisodeIds.has(episode.id);
+              const isCurrentEpisodePlaying = isPlaying && currentEpisode?.id === episode.id; // Verificar se este episódio está tocando
               return (
                 <Card
                   key={episode.id}
@@ -358,7 +359,7 @@ const PodcastOverview: React.FC = () => {
                           playEpisode(episode);
                         }}
                       >
-                        <Play className="h-6 w-6 ml-1" />
+                        {isCurrentEpisodePlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />} {/* Renderização condicional */}
                       </Button>
                       {userId && (
                         <Heart
