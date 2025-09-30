@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form'; // Corrigido: Importar useForm de react-hook-form
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { showError, showSuccess } from '@/utils/toast';
-import { Link } from 'react-router-dom'; // Importar Link
+import { Link } from 'react-router-dom';
 
 const signInSchema = z.object({
   email: z.string().email({ message: 'E-mail inválido.' }),
