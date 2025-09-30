@@ -397,15 +397,7 @@ const PodcastOverview: React.FC = () => {
             <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
           </div>
         ) : displayEpisodes.length > 0 ? (
-          isMobile ? (
-            <div className="grid grid-cols-1 gap-4">
-              {displayEpisodes.map((episode) => (
-                <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast.coverImage} isMobile={isMobile} />
-              ))}
-            </div>
-          ) : (
-            <EpisodeList episodes={displayEpisodes} podcastCoverImage={myPodcast.coverImage} />
-          )
+          <EpisodeList episodes={displayEpisodes} podcastCoverImage={myPodcast.coverImage} />
         ) : (
           <div className="flex flex-col items-center justify-center h-40 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
             <Search className="h-12 w-12 mb-4 text-podcast-gray" />
