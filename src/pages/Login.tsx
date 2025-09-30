@@ -34,15 +34,15 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex">
       {/* Painel Esquerdo (Branding e Citação) - Visível apenas em telas maiores */}
-      <div className="hidden md:flex md:w-1/2 bg-podcast-purple relative p-8 flex-col justify-between text-podcast-white">
+      <div className="hidden md:flex md:w-1/2 bg-podcast-black-light relative p-8 flex-col justify-between text-podcast-white">
         {/* Logo/Título no topo */}
         <div className="flex items-center gap-3">
-          <div className="bg-white p-2 rounded-md">
-            <Podcast className="text-podcast-purple" size={28} />
+          <div className="bg-podcast-green p-2 rounded-md">
+            <Podcast className="text-podcast-black" size={28} />
           </div>
           <div>
             <h1 className="text-2xl font-bold">DesavançaCast</h1>
-            <p className="text-sm text-podcast-white/80">Seu Podcast de Produtividade</p>
+            <p className="text-sm text-podcast-gray">Seu Podcast de Produtividade</p>
           </div>
         </div>
 
@@ -52,19 +52,19 @@ const Login: React.FC = () => {
         </div>
 
         {/* Copyright no rodapé */}
-        <div className="text-xs text-podcast-white/60">
+        <div className="text-xs text-podcast-gray">
           © {currentYear} DesavançaCast
         </div>
       </div>
 
       {/* Painel Direito (Formulários de Autenticação) */}
-      <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-4 sm:p-8">
-        <Card className="w-full max-w-sm sm:max-w-md bg-white border-none shadow-lg rounded-xl overflow-hidden">
+      <div className="w-full md:w-1/2 bg-podcast-black flex items-center justify-center p-4 sm:p-8">
+        <Card className="w-full max-w-sm sm:max-w-md bg-podcast-black-light border-podcast-border shadow-lg rounded-xl overflow-hidden">
           <CardHeader className="text-center pt-6">
-            <CardTitle className="text-3xl font-bold text-gray-900">
+            <CardTitle className="text-3xl font-bold text-podcast-white">
               {authView === 'sign_in' ? 'Acesse sua conta' : 'Crie sua conta gratuita'}
             </CardTitle>
-            <p className="text-gray-600 mt-2">
+            <p className="text-podcast-gray mt-2">
               {authView === 'sign_in'
                 ? 'Bem-vindo de volta! Faça login para continuar.'
                 : 'Comece sua jornada na produtividade caótica hoje mesmo.'}
@@ -72,13 +72,13 @@ const Login: React.FC = () => {
           </CardHeader>
           <CardContent className="p-6 pt-2">
             {/* Placeholder para o botão Google */}
-            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-2 h-11 text-gray-700 border-gray-300 hover:bg-gray-50">
+            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-2 h-11 text-podcast-white border-podcast-border hover:bg-podcast-border">
               {/* Se você tiver um ícone do Google, pode adicioná-lo aqui */}
               Continuar com Google
             </Button>
             <div className="relative flex justify-center text-xs uppercase my-6">
-              <span className="bg-white px-2 text-gray-500">ou</span>
-              <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-gray-200" />
+              <span className="bg-podcast-black-light px-2 text-podcast-gray">ou</span>
+              <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-podcast-border" />
             </div>
 
             {authView === 'sign_in' ? (
