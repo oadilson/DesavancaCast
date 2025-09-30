@@ -17,10 +17,11 @@ import LikedEpisodes from "./pages/LikedEpisodes";
 import Downloads from "./pages/Downloads";
 import RecentPlays from "./pages/RecentPlays";
 import EpisodeDetail from "./pages/EpisodeDetail";
-import Premium from "./pages/Premium"; // Importar a nova página
+import Premium from "./pages/Premium";
+import Library from "./pages/Library"; // Importar a nova página Library
 import { PodcastPlayerProvider } from "./context/PodcastPlayerContext";
 import { DownloadProvider } from "./context/DownloadContext";
-import { SubscriptionProvider } from "./context/SubscriptionContext"; // Importar o novo provider
+import { SubscriptionProvider } from "./context/SubscriptionContext";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <SubscriptionProvider> {/* Adicionar o SubscriptionProvider */}
+        <SubscriptionProvider>
           <DownloadProvider>
             <PodcastPlayerProvider>
               <Routes>
@@ -45,7 +46,8 @@ const App = () => (
                 <Route path="/downloads" element={<Downloads />} />
                 <Route path="/recent" element={<RecentPlays />} />
                 <Route path="/episode/:episodeId" element={<EpisodeDetail />} />
-                <Route path="/premium" element={<Premium />} /> {/* NOVA ROTA */}
+                <Route path="/premium" element={<Premium />} />
+                <Route path="/library" element={<Library />} /> {/* NOVA ROTA */}
                 <Route 
                   path="/admin" 
                   element={

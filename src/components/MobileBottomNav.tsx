@@ -33,8 +33,8 @@ const MobileBottomNav: React.FC = () => {
     { path: '/search', label: 'Buscar', icon: Search },
   ];
 
-  // 'Biblioteca' will link to /liked for now.
-  const libraryPath = userId ? '/liked' : '/login';
+  // 'Biblioteca' will link to /library now.
+  const libraryPath = userId ? '/library' : '/login';
   const profilePath = userId ? '/profile' : '/login'; // Profile also redirects to login if not authenticated
 
   const currentYear = new Date().getFullYear();
@@ -55,8 +55,8 @@ const MobileBottomNav: React.FC = () => {
         })}
         {/* Item da Biblioteca */}
         <Link to={libraryPath} className="flex flex-col items-center justify-center text-xs font-medium flex-1 h-full">
-          <Library className={cn("h-6 w-6 mb-1 transition-colors", location.pathname === '/liked' || location.pathname === '/downloads' || location.pathname === '/recent' ? "text-podcast-green" : "text-podcast-gray group-hover:text-podcast-white")} />
-          <span className={cn("transition-colors", location.pathname === '/liked' || location.pathname === '/downloads' || location.pathname === '/recent' ? "text-podcast-green" : "text-podcast-gray group-hover:text-podcast-white")}>
+          <Library className={cn("h-6 w-6 mb-1 transition-colors", location.pathname.startsWith('/library') || location.pathname === '/liked' || location.pathname === '/downloads' || location.pathname === '/recent' ? "text-podcast-green" : "text-podcast-gray group-hover:text-podcast-white")} />
+          <span className={cn("transition-colors", location.pathname.startsWith('/library') || location.pathname === '/liked' || location.pathname === '/downloads' || location.pathname === '/recent' ? "text-podcast-green" : "text-podcast-gray group-hover:text-podcast-white")}>
             Biblioteca
           </span>
         </Link>
