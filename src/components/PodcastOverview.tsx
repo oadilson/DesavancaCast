@@ -273,7 +273,7 @@ const PodcastOverview: React.FC = () => {
           </h2>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center mb-6 gap-4"> {/* Removido justify-between */}
           <div className="flex space-x-2 overflow-x-auto pb-2">
             <Button
               variant="ghost"
@@ -322,11 +322,11 @@ const PodcastOverview: React.FC = () => {
               Não ouvidos
             </Button>
           </div>
-          <div className="relative w-full sm:w-auto">
+          <div className="relative w-full sm:w-64"> {/* Ajustado para largura fixa em sm+ e alinhado à esquerda */}
             <Input
               type="text"
               placeholder="Buscar episódios..."
-              className="w-full sm:w-64 bg-podcast-black-light border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 pr-10 rounded-full"
+              className="w-full bg-podcast-black-light border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 pr-10 rounded-full"
               value={localSearchTerm}
               onChange={(e) => setLocalSearchTerm(e.target.value)}
             />
