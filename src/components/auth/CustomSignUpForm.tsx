@@ -85,24 +85,26 @@ const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn })
           <p className="text-red-500 text-xs mt-1">{form.formState.errors.email.message}</p>
         )}
       </div>
-      <div className="relative">
+      <div>
         <Label htmlFor="password" className="text-podcast-white text-sm font-medium">Senha</Label>
-        <Input
-          id="password"
-          type={showPassword ? 'text' : 'password'}
-          placeholder="Crie uma senha segura"
-          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11 pr-10"
-          {...form.register('password')}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="absolute right-2 top-1/2 -translate-y-1/2 mt-2 text-podcast-gray hover:text-podcast-white"
-          onClick={() => setShowPassword(prev => !prev)}
-        >
-          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-        </Button>
+        <div className="relative mt-2">
+          <Input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Crie uma senha segura"
+            className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 h-11 pr-10 w-full"
+            {...form.register('password')}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-podcast-gray hover:text-podcast-white"
+            onClick={() => setShowPassword(prev => !prev)}
+          >
+            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </Button>
+        </div>
         {form.formState.errors.password && (
           <p className="text-red-500 text-xs mt-1">{form.formState.errors.password.message}</p>
         )}
