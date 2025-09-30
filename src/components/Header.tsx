@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [globalSearchTerm, setGlobalSearchTerm] = useState(''); // Estado para a busca global
+  const [globalSearchTerm, setGlobalSearchTerm] = useState('');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     e.preventDefault();
     if (globalSearchTerm.trim()) {
       navigate(`/search?query=${encodeURIComponent(globalSearchTerm.trim())}`);
-      setGlobalSearchTerm(''); // Limpa o campo de busca após a navegação
+      setGlobalSearchTerm('');
     }
   };
 
@@ -105,22 +105,17 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         className
       )}
     >
-      {/* Grupo Esquerdo: Gatilho da Sidebar Mobile + Logo do Podcast (apenas desktop) */}
-      <div className="flex items-center">
+      {/* Seção esquerda: Gatilho da Sidebar Mobile + Logo do Podcast (alinhado com a sidebar) */}
+      <div className="absolute left-0 top-0 bottom-0 flex items-center px-4 md:w-64">
         <MobileSidebar />
         <Link to="/" className="hidden md:flex items-center gap-2 text-podcast-white hover:text-podcast-green transition-colors ml-2">
           <Podcast className="text-podcast-green" size={24} />
         </Link>
       </div>
 
-      {/* Grupo Central: Logo do Podcast (apenas mobile) OU Barra de Busca (apenas desktop) */}
-      <div className="flex-grow flex items-center justify-center">
-        {/* Logo do Podcast para Mobile */}
-        <Link to="/" className="flex items-center gap-2 text-podcast-white hover:text-podcast-green transition-colors md:hidden">
-          <Podcast className="text-podcast-green" size={24} />
-        </Link>
-
-        {/* Barra de Busca para Desktop */}
+      {/* Conteúdo principal do cabeçalho (barra de busca e menu do usuário) - deslocado para a direita */}
+      <div className="flex items-center justify-between flex-grow md:ml-64">
+        {/* Barra de Busca Global */}
         <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-lg hidden md:block mx-4">
           <Input
             type="text"
@@ -133,18 +128,18 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             <Search className="h-5 w-5" />
           </Button>
         </form>
-      </div>
 
-      {/* Grupo Direito: Menu do Usuário */}
-      <div className="flex items-center space-x-2 md:space-x-4">
-        {session ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                <Avatar className="h-10 w-10">
-                   <AvatarImage src={profile?.avatar_url || `https://api.dicebear.com/8.x/initials/svg?seed=${session.user.email}`} alt="User Avatar" />
-                  <AvatarFallback>{session.user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
+        {/* Seção direita: Menu do Usuário */}
+        <div className="flex items-center space-x-2 md:space-x-4">
+          {session ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-10 w-10">
+                     <AvatarImage src={profile?.avatar_url || `https://api.dicebear.com/8.x/initials/svg?seed=${session.user.email}`} alt="User Avatar" />
+                    <AvatarFallback>{session.user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56 bg-podcast-black-light border-podcast-border text-podcast-white" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
@@ -184,6 +179,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
             </>
           )}
         </div>
+      </div>
     </header>
   );
 };
