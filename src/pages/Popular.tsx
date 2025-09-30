@@ -4,7 +4,7 @@ import { TrendingUp, Loader2, AlertTriangle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getPodcastForDisplay, getPopularEpisodes } from '@/data/podcastData';
 import EpisodeList from '@/components/EpisodeList';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea } => '@/components/ui/scroll-area';
 import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
 import EpisodeListItem from '@/components/EpisodeListItem'; // Import EpisodeListItem
 

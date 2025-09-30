@@ -54,9 +54,9 @@ const Downloads: React.FC = () => {
             {downloadedEpisodes.map((episode) => (
               <div key={episode.id} className={cn(
                 "flex items-center justify-between bg-podcast-black-light rounded-lg border border-podcast-border",
-                isMobile ? "p-2 gap-2" : "p-4 gap-4" // Adjusted padding and gap for mobile
+                isMobile ? "p-2" : "p-4" // Adjusted padding for mobile
               )}>
-                <div className="flex items-center gap-3 flex-grow min-w-0"> {/* Adjusted gap here */}
+                <div className={cn("flex items-center flex-grow min-w-0", isMobile ? "gap-2" : "gap-4")}> {/* Adjusted gap here */}
                   <img
                     src={episode.coverImage || '/placeholder.svg'}
                     alt={episode.title}
@@ -76,7 +76,7 @@ const Downloads: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className={cn("flex items-center ml-4", isMobile ? "gap-1" : "gap-2")}> {/* Adjusts gap for buttons */}
+                <div className={cn("flex items-center", isMobile ? "ml-2 gap-1" : "ml-4 gap-2")}> {/* Adjusts gap for buttons */}
                   <Button variant="ghost" size="icon" onClick={() => handlePlayDownloaded(episode)}
                     className={cn(isMobile ? "h-9 w-9" : "h-10 w-10")}> {/* Adjusted button size */}
                     <PlayCircle className={cn("text-podcast-green", isMobile ? "h-4 w-4" : "h-6 w-6")} /> {/* Adjusted icon size */}

@@ -24,11 +24,11 @@ const EpisodeListItem: React.FC<EpisodeListItemProps> = ({ episode, podcastCover
     <div
       className={cn(
         "flex items-center justify-between bg-podcast-black-light rounded-lg border border-podcast-border hover:bg-podcast-border transition-colors cursor-pointer",
-        isMobile ? "p-2 gap-2" : "p-4 gap-4" // Adjusted padding and gap for mobile to be slightly smaller
+        isMobile ? "p-2" : "p-4" // Adjusted padding for mobile
       )}
       onClick={() => navigate(`/episode/${episode.id}`)}
     >
-      <div className="flex items-center gap-3 flex-grow min-w-0"> {/* Adjusted gap here */}
+      <div className={cn("flex items-center flex-grow min-w-0", isMobile ? "gap-2" : "gap-4")}> {/* Adjusted gap here */}
         <div className="relative flex-shrink-0">
           <img
             src={episode.coverImage || podcastCoverImage || '/placeholder.svg'}
@@ -55,19 +55,21 @@ const EpisodeListItem: React.FC<EpisodeListItemProps> = ({ episode, podcastCover
           </div>
         </div>
       </div>
-      <Button
-        size="icon"
-        className={cn(
-          "rounded-full bg-podcast-green text-podcast-black flex-shrink-0 ml-4 hover:bg-podcast-green/90",
-          isMobile ? "h-9 w-9" : "h-10 w-10" // Adjusted button size for mobile
-        )}
-        onClick={(e) => {
-          e.stopPropagation();
-          playEpisode(episode);
-        }}
-      >
-        {isCurrentEpisodePlaying ? <Pause className={cn(isMobile ? "h-4 w-4" : "h-5 w-5")} /> : <Play className={cn("ml-1", isMobile ? "h-4 w-4" : "h-5 w-5")} />}
-      </Button>
+      <div className={cn("flex items-center", isMobile ? "ml-2" : "ml-4")}> {/* Conditional margin-left for button group */}
+        <Button
+          size="icon"
+          className={cn(
+            "rounded-full bg-podcast-green text-podcast-black flex-shrink-0 hover:bg-podcast-green/90",
+            isMobile ? "h-9 w-9" : "h-10 w-10" // Adjusted button size for mobile
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            playEpisode(episode);
+          }}
+        >
+          {isCurrentEpisodePlaying ? <Pause className={cn(isMobile ? "h-4 w-4" : "h-5 w-5")} /> : <Play className={cn("ml-1", isMobile ? "h-4 w-4" : "h-5 w-5")} />}
+        </Button>
+      </div>
     </div>
   );
 };
