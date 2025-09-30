@@ -18,7 +18,8 @@ import Downloads from "./pages/Downloads";
 import RecentPlays from "./pages/RecentPlays";
 import EpisodeDetail from "./pages/EpisodeDetail";
 import Premium from "./pages/Premium";
-import Library from "./pages/Library"; // Importar a nova página Library
+import Library from "./pages/Library";
+import Search from "./pages/Search"; // Importar a nova página Search
 import { PodcastPlayerProvider } from "./context/PodcastPlayerContext";
 import { DownloadProvider } from "./context/DownloadContext";
 import { SubscriptionProvider } from "./context/SubscriptionContext";
@@ -38,7 +39,8 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/profile" element={<Profile />} />
-                <Route path="/search" element={<SearchResults />} />
+                <Route path="/search" element={<Search />} /> {/* NOVA ROTA */}
+                <Route path="/searchresults" element={<SearchResults />} /> {/* Rota existente para resultados de busca */}
                 <Route path="/episodes" element={<Episodes />} />
                 <Route path="/popular" element={<Popular />} />
                 <Route path="/releases" element={<Releases />} />
@@ -47,7 +49,7 @@ const App = () => (
                 <Route path="/recent" element={<RecentPlays />} />
                 <Route path="/episode/:episodeId" element={<EpisodeDetail />} />
                 <Route path="/premium" element={<Premium />} />
-                <Route path="/library" element={<Library />} /> {/* NOVA ROTA */}
+                <Route path="/library" element={<Library />} />
                 <Route 
                   path="/admin" 
                   element={

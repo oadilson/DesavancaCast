@@ -30,12 +30,11 @@ const MobileBottomNav: React.FC = () => {
 
   const navItems = [
     { path: '/', label: 'Início', icon: Home },
-    { path: '/search', label: 'Buscar', icon: Search },
+    { path: '/search', label: 'Buscar', icon: Search }, // Link para a nova página de busca
   ];
 
-  // 'Biblioteca' will link to /library now.
   const libraryPath = userId ? '/library' : '/login';
-  const profilePath = userId ? '/profile' : '/login'; // Profile also redirects to login if not authenticated
+  const profilePath = userId ? '/profile' : '/login';
 
   const currentYear = new Date().getFullYear();
 
