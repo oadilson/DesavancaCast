@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMyPodcast } from '@/data/podcastData';
 import { Episode } from '@/types/podcast';
@@ -49,6 +49,13 @@ const Admin: React.FC = () => {
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
   const [isReverting, setIsReverting] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+
+  // Show error toast if there's an error loading podcast data
+  useEffect(() => {
+    if (isError && error) {
+      showError(`Erro ao carregar dados do podcast: ${error.message}`);
+    }
+  }, [isError, error]);
 
   const handleEditClick = (episode: Episode) => {
     setSelectedEpisode(episode);
