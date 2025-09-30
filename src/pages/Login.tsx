@@ -34,7 +34,7 @@ const Login: React.FC = () => {
             radial-gradient(circle at 80% 20%, hsl(var(--podcast-purple) / 0.1) 0%, transparent 50%),
             linear-gradient(to bottom right, hsl(var(--podcast-black-light)), hsl(var(--podcast-black)))
           `,
-          backgroundSize: '200% 200%', // Permite que o gradiente se mova
+          backgroundSize: '200% 200%', // Permite que o gradiente se movam
         }}
       ></div>
       <Card className="w-full max-w-sm sm:max-w-md bg-podcast-black/90 backdrop-blur-sm border border-podcast-border text-podcast-white shadow-2xl rounded-2xl overflow-hidden transition-all duration-300">
