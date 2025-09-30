@@ -206,7 +206,6 @@ const PodcastOverview: React.FC = () => {
     <div className="space-y-8">
       {isMobile && (
         <>
-          <LibraryCards userId={currentUserId} isAdmin={isAdmin} className="mb-8 px-4" />
           {/* Novo Banner Mobile */}
           <Card className="mx-4 mb-8 bg-gradient-to-br from-podcast-purple to-podcast-black-light border-none text-podcast-white shadow-lg rounded-xl p-6 text-center">
             <CardContent className="p-0 flex flex-col items-center">
@@ -242,6 +241,7 @@ const PodcastOverview: React.FC = () => {
               </div>
             </CardContent>
           </Card>
+          <LibraryCards userId={currentUserId} isAdmin={isAdmin} className="mb-8 px-4" />
         </>
       )}
 
