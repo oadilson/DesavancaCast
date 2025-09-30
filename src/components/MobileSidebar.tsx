@@ -1,7 +1,7 @@
 import React from 'react';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Home, Search, Library, User } from 'lucide-react'; // Importar ícones necessários
+import { Menu, X, Home, Search, Library, User, Podcast } from 'lucide-react'; // Importar Podcast
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client'; // Para verificar o status de login
