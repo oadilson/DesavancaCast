@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { getPodcastForDisplay, getAudioTrails, getPopularEpisodes, getUnplayedEpisodes } from '@/data/podcastData';
+import { getPodcastForDisplay, getAudioTrails, getPopularEpisodes, getUnplayedEpisodes, getPodcastAnalytics } from '@/data/podcastData';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause, Crown } from 'lucide-react';
+import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause, Crown, Users, Headphones } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePodcastPlayer } from '@/context/PodcastPlayerContext';
 import { formatDuration } from '@/lib/utils';
@@ -32,6 +32,12 @@ const PodcastOverview: React.FC = () => {
   const { data: audioTrails, isLoading: isLoadingTrails } = useQuery({
     queryKey: ['audioTrailsHome'],
     queryFn: getAudioTrails,
+  });
+
+  const { data: analytics, isLoading: isLoadingAnalytics } = useQuery({
+    queryKey: ['podcastAnalyticsOverview', myPodcast?.id], // Chave de query específica para a overview
+    queryFn: () => getPodcastAnalytics(myPodcast!.id),
+    enabled: !!myPodcast?.id,
   });
 
   const { playEpisode, currentEpisode, isPlaying } = usePodcastPlayer();
@@ -144,6 +150,7 @@ const PodcastOverview: React.FC = () => {
   const handlePodcastDetailsSave = () => {
     queryClient.invalidateQueries({ queryKey: ['myPodcastDisplay'] }); // Invalida a chave de exibição pública
     queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] }); // Invalida a chave de admin também
+    queryClient.invalidateQueries({ queryKey: ['podcastAnalyticsOverview'] }); // Invalida os analytics da overview
   };
 
   if (isLoading) {
@@ -181,9 +188,7 @@ const PodcastOverview: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8"> {/* Removido max-w-screen-xl mx-auto */}
-      {/* Removed: Global Search Bar from here */}
-
+    <div className="space-y-8">
       <section
         className="relative flex flex-col md:flex-row items-center md:items-end p-6 md:p-8 rounded-xl shadow-lg overflow-hidden"
         style={{ minHeight: '300px' }}
@@ -259,6 +264,35 @@ const PodcastOverview: React.FC = () => {
               )}
             </div>
           </div>
+
+          {/* NOVO: Resumo de Analytics */}
+          {!isLoadingAnalytics && analytics && (
+            <div className="hidden md:block md:w-1/3 lg:w-1/4 flex-shrink-0 p-4 bg-podcast-black-light/50 rounded-lg backdrop-blur-sm border border-podcast-border self-stretch flex flex-col justify-center">
+              <h3 className="text-lg font-semibold text-podcast-white mb-3">Estatísticas Rápidas</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center text-podcast-gray"><PlayCircle className="h-4 w-4 mr-2 text-podcast-green" /> Reproduções Totais:</span>
+                  <span className="font-bold text-podcast-white">{analytics.totalPlays}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="flex items-center text-podcast-gray"><Users className="h-4 w-4 mr-2 text-podcast-green" /> Ouvintes Únicos:</span>
+                  <span className="font-bold text-podcast-white">{analytics.uniqueListeners}</span>
+                </div>
+                {/* Adicione mais métricas se desejar */}
+                <div className="text-center mt-4">
+                  {isAdmin && (
+                    <Button
+                      variant="ghost"
+                      className="text-podcast-green hover:underline text-sm"
+                      onClick={() => navigate('/admin?section=analytics')}
+                    >
+                      Ver Analytics Completos
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
