@@ -13,7 +13,7 @@ interface LibraryCardsProps {
 const LibraryCards: React.FC<LibraryCardsProps> = ({ userId, isAdmin, className }) => {
   const libraryCardsData = [
     {
-      title: 'Histórico', // Alterado de 'Ouvidos Recentemente' para 'Histórico'
+      title: 'Histórico',
       description: 'Continue de onde parou',
       icon: History,
       bgColor: 'bg-podcast-green',
@@ -61,8 +61,8 @@ const LibraryCards: React.FC<LibraryCardsProps> = ({ userId, isAdmin, className 
           )}
         >
           <card.icon className="h-8 w-8 mb-3" />
-          <CardTitle className="text-xl font-bold">{card.title}</CardTitle>
-          <CardDescription className="text-sm text-white/80 mt-1">{card.description}</CardDescription>
+          <CardTitle className="text-xl font-bold truncate">{card.title}</CardTitle>
+          <CardDescription className="text-sm text-white/80 mt-1 truncate">{card.description}</CardDescription>
         </Link>
       ))}
     </div>

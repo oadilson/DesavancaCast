@@ -205,7 +205,7 @@ const PodcastOverview: React.FC = () => {
   return (
     <div className="space-y-8">
       {isMobile && ( // Renderiza os cards da biblioteca apenas no mobile
-        <LibraryCards userId={currentUserId} isAdmin={isAdmin} className="mb-8" />
+        <LibraryCards userId={currentUserId} isAdmin={isAdmin} className="mb-8 px-4" /> {/* Adicionado px-4 aqui */}
       )}
 
       <section
