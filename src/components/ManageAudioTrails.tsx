@@ -70,7 +70,7 @@ const ManageAudioTrails: React.FC = () => {
             <CardTitle className="text-2xl">Gerenciar Trilhas de Áudio</CardTitle>
             <CardDescription>Crie e edite suas playlists premium.</CardDescription>
           </div>
-          <Button onClick={handleAddNew} className="bg-podcast-green text-podcast-black hover:opacity-90">
+          <Button onClick={handleAddNew} className="bg-podcast-green text-podcast-black hover:bg-podcast-green/90">
             <PlusCircle className="mr-2 h-4 w-4" />
             Nova Trilha
           </Button>
