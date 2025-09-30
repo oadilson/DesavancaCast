@@ -69,14 +69,14 @@ const CustomSignInForm: React.FC<CustomSignInFormProps> = ({ onSwitchToSignUp })
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5"> {/* Aumentado o espaçamento */}
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
       <div>
         <Label htmlFor="email" className="text-podcast-white text-sm font-medium">E-mail</Label>
         <Input
           id="email"
           type="email"
           placeholder="seu@email.com"
-          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11" // Altura e foco melhorados
+          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11"
           {...form.register('email')}
         />
         {form.formState.errors.email && (
@@ -89,7 +89,7 @@ const CustomSignInForm: React.FC<CustomSignInFormProps> = ({ onSwitchToSignUp })
           id="password"
           type="password"
           placeholder="Sua senha"
-          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11" // Altura e foco melhorados
+          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11"
           {...form.register('password')}
         />
         {form.formState.errors.password && (
@@ -106,7 +106,7 @@ const CustomSignInForm: React.FC<CustomSignInFormProps> = ({ onSwitchToSignUp })
           </button>
         </div>
       </div>
-      <Button type="submit" className="w-full bg-podcast-green text-podcast-black hover:opacity-90 h-11 text-base font-semibold" disabled={isLoading}>
+      <Button type="submit" className="w-full bg-podcast-green text-podcast-black hover:bg-podcast-green/80 h-11 text-base font-semibold" disabled={isLoading}>
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Entrar
       </Button>

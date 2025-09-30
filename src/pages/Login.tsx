@@ -39,11 +39,11 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-podcast-black">
       <div
-        className="absolute inset-0 opacity-40 blur-sm animate-background-pan"
+        className="absolute inset-0 opacity-70 blur-xs animate-background-pan"
         style={{
           background: `
-            radial-gradient(circle at 20% 80%, hsl(var(--podcast-green) / 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, hsl(var(--podcast-purple) / 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, hsl(var(--podcast-green) / 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, hsl(var(--podcast-purple) / 0.3) 0%, transparent 50%),
             linear-gradient(to bottom right, hsl(var(--podcast-black-light)), hsl(var(--podcast-black)))
           `,
           backgroundSize: '200% 200%', // Permite que o gradiente se movam
