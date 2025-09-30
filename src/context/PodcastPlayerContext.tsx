@@ -46,13 +46,13 @@ export const PodcastPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     lastPlayed.current = { episodeId, timestamp: Date.now() };
 
-    const { error } = await supabase.from('plays').insert({
-        episode_id: episodeId,
-        user_id: userId,
+    // Invocar a Edge Function para registrar a reprodução
+    const { error } = await supabase.functions.invoke('record-play', {
+      body: { episode_id: episodeId, user_id: userId },
     });
 
     if (error) {
-        console.error('Error recording play:', error);
+        console.error('Error recording play via Edge Function:', error);
     }
   }, []);
 
