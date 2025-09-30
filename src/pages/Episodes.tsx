@@ -2,15 +2,18 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { ListMusic, Loader2, AlertTriangle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { getPodcastForDisplay } from '@/data/podcastData'; // Usando a nova função
+import { getPodcastForDisplay } from '@/data/podcastData';
 import EpisodeList from '@/components/EpisodeList';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useIsMobile } from '@/hooks/use-mobile'; // Importar o hook useIsMobile
+import EpisodeListItem from '@/components/EpisodeListItem'; // Importar o componente EpisodeListItem
 
 const Episodes: React.FC = () => {
   const { data: myPodcast, isLoading, isError, error } = useQuery({
-    queryKey: ['allEpisodesDisplay'], // Chave de query alterada
-    queryFn: getPodcastForDisplay, // Usando a nova função
+    queryKey: ['allEpisodesDisplay'],
+    queryFn: getPodcastForDisplay,
   });
+  const isMobile = useIsMobile(); // Usar o hook para detectar mobile
 
   if (isLoading) {
     return (
@@ -41,13 +44,21 @@ const Episodes: React.FC = () => {
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className=""> {/* Removido max-w-screen-xl mx-auto */}
+        <div className="">
           <h1 className="text-3xl font-bold text-podcast-white mb-6 flex items-center">
             <ListMusic className="mr-3 h-7 w-7 text-podcast-green" />
             Todos os Episódios
           </h1>
           {allEpisodes.length > 0 ? (
-            <EpisodeList episodes={allEpisodes} podcastCoverImage={myPodcast?.coverImage} />
+            isMobile ? ( // Renderização condicional para mobile
+              <div className="grid grid-cols-1 gap-4">
+                {allEpisodes.map((episode) => (
+                  <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast?.coverImage} />
+                ))}
+              </div>
+            ) : ( // Renderização para desktop
+              <EpisodeList episodes={allEpisodes} podcastCoverImage={myPodcast?.coverImage} />
+            )
           ) : (
             <div className="flex flex-col items-center justify-center h-64 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
               <ListMusic className="h-12 w-12 mb-4 text-podcast-gray" />
