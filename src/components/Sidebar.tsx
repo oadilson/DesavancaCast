@@ -3,7 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { Home, Plus, Heart, Podcast, ListMusic, TrendingUp, Calendar, Download, History, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client'; // Importar supabase
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
+import { getPodcastForDisplay } from '@/data/podcastData';
 
 const ADMIN_EMAIL = 'adilsonsilva@outlook.com'; // Definir o email do administrador
 
@@ -15,6 +17,12 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   const location = useLocation();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loadingAuth, setLoadingAuth] = useState(true);
+
+  // Fetch podcast data for display in sidebar
+  const { data: myPodcast, isLoading: isLoadingPodcast } = useQuery({
+    queryKey: ['sidebarPodcastDisplay'],
+    queryFn: getPodcastForDisplay,
+  });
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -43,21 +51,26 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
 
   const navItems = [
     { path: '/', label: 'Início', icon: Home },
-    { path: '/episodes', label: 'Episódios', icon: ListMusic }, // Alterado
-    { path: '/popular', label: 'Populares', icon: TrendingUp }, // Alterado
+    { path: '/episodes', label: 'Episódios', icon: ListMusic },
+    { path: '/popular', label: 'Populares', icon: TrendingUp },
     { path: '/releases', label: 'Lançamentos', icon: Calendar },
   ];
 
   const libraryItems = [
-    { path: '/liked', label: 'Curtidos', icon: Heart }, // Alterado
+    { path: '/liked', label: 'Curtidos', icon: Heart },
     { path: '/downloads', label: 'Downloads', icon: Download },
-    { path: '/recent', label: 'Histórico', icon: History }, // Alterado
+    { path: '/recent', label: 'Histórico', icon: History },
   ];
 
   return (
     <div className={cn("flex flex-col h-full bg-podcast-black text-podcast-gray px-8 py-4", className)}>
       <div className="mb-6">
-        {/* Espaço reservado para o título que agora está no Header */}
+        {!isLoadingPodcast && myPodcast && (
+          <Link to="/" className="flex items-center gap-3 mb-6">
+            <img src={myPodcast.coverImage || '/placeholder.svg'} alt={myPodcast.title} className="h-10 w-10 rounded-lg object-cover" />
+            <span className="text-lg font-bold text-podcast-white">{myPodcast.title}</span>
+          </Link>
+        )}
       </div>
 
       <nav className="flex-grow space-y-4">
@@ -103,7 +116,6 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
           })}
         </div>
         
-        {/* Link para Administração, visível apenas para administradores */}
         {!loadingAuth && isAdmin && (
           <div className="space-y-1 border-t border-podcast-border pt-4 mt-4">
             <Link to="/admin" className="block">
