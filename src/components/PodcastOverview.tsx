@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { getPodcastForDisplay, getAudioTrails, getPopularEpisodes, getUnplayedEpisodes } from '@/data/podcastData';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause } from 'lucide-react';
+import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause, Star } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePodcastPlayer } from '@/context/PodcastPlayerContext';
 import { formatDuration } from '@/lib/utils';
@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import EditPodcastDetailsModal from './EditPodcastDetailsModal';
 import { supabase } from '@/integrations/supabase/client';
 import { showSuccess, showError } from '@/utils/toast';
+import { Badge } from './ui/badge';
 
 const ADMIN_EMAIL = 'adilsonsilva@outlook.com';
 
@@ -352,6 +353,12 @@ const PodcastOverview: React.FC = () => {
                   <CardContent className="p-0">
                     <div className="relative mb-3 flex justify-center">
                       <img src={episode.coverImage || myPodcast.coverImage || '/placeholder.svg'} alt={episode.title} className="w-full rounded-lg object-cover aspect-square" />
+                      {episode.is_premium && (
+                        <Badge className="absolute top-2 left-2 bg-podcast-purple text-white border-none text-xs">
+                          <Star className="h-3 w-3 mr-1" />
+                          Premium
+                        </Badge>
+                      )}
                       <Button
                         size="icon"
                         className="absolute bottom-2 right-2 rounded-full bg-podcast-green text-podcast-black h-12 w-12 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-y-0 translate-y-2 hover:bg-podcast-green/90 shadow-lg"
