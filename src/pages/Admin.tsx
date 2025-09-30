@@ -176,7 +176,7 @@ const Admin: React.FC = () => {
                             <TableCell className="text-podcast-gray">{new Date(episode.release_date || '').toLocaleDateString('pt-BR')}</TableCell>
                             <TableCell>
                               {episode.is_edited ? (
-                                <Badge variant="secondary" className="bg-podcast-purple/20 text-podcast-purple border-none">
+                                <Badge variant="secondary" className="bg-podcast-green/20 text-podcast-green border-none">
                                   <Edit2 className="mr-1 h-3 w-3" /> Editado
                                 </Badge>
                               ) : (
@@ -193,6 +193,7 @@ const Admin: React.FC = () => {
                                   checked={episode.is_premium}
                                   onCheckedChange={(checked) => handlePremiumToggle(episode.id, checked)}
                                   aria-label="Marcar como premium"
+                                  className="data-[state=checked]:bg-podcast-green"
                                 />
                               )}
                             </TableCell>
