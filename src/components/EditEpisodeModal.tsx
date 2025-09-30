@@ -117,7 +117,7 @@ const EditEpisodeModal: React.FC<EditEpisodeModalProps> = ({ episode, isOpen, on
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-          <Button onClick={handleSave} disabled={isSaving} className="bg-podcast-green text-podcast-black hover:opacity-90">
+          <Button onClick={handleSave} disabled={isSaving} className="bg-podcast-green text-podcast-black hover:bg-podcast-green/90">
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Salvar Alterações
           </Button>
