@@ -52,6 +52,7 @@ const Admin: React.FC = () => {
     queryClient.invalidateQueries({ queryKey: ['likedEpisodes'] });
     queryClient.invalidateQueries({ queryKey: ['episodeDetail'] });
     queryClient.invalidateQueries({ queryKey: ['audioTrailsHome'] });
+    queryClient.invalidateQueries({ queryKey: ['podcastAnalytics'] }); // Invalida analytics também
   };
 
   const handleEditClick = (episode: Episode) => {
@@ -143,7 +144,42 @@ const Admin: React.FC = () => {
           </TabsList>
 
           <TabsContent value="episodes" className="space-y-6">
-            {/* ... (código do card de visão geral) ... */}
+            <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-2xl">Visão Geral do Podcast</CardTitle>
+                  <CardDescription>
+                    Informações gerais e sincronização do seu podcast.
+                  </CardDescription>
+                </div>
+                <Button onClick={handleSync} disabled={isSyncing} className="bg-podcast-green text-podcast-black hover:bg-podcast-green/90">
+                  {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
+                  {isSyncing ? 'Sincronizando...' : 'Sincronizar RSS'}
+                </Button>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-center space-x-4">
+                  <img src={myPodcast.coverImage || '/placeholder.svg'} alt={myPodcast.title} className="h-24 w-24 rounded-lg object-cover" />
+                  <div>
+                    <h3 className="text-xl font-bold">{myPodcast.title}</h3>
+                    <p className="text-podcast-gray">{myPodcast.host}</p>
+                    <p className="text-sm text-podcast-gray">{myPodcast.episodes.length} episódios</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center text-sm text-podcast-gray">
+                    <Rss className="mr-2 h-4 w-4 text-podcast-green" />
+                    <span className="font-medium text-podcast-white truncate">{myPodcast.rss_feed_url}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-podcast-gray">
+                    <Info className="mr-2 h-4 w-4 text-podcast-green" />
+                    <span className="font-medium text-podcast-white">
+                      {myPodcast.is_edited ? 'Detalhes editados manualmente' : 'Detalhes do RSS original'}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
             <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
               <CardHeader>
@@ -242,7 +278,95 @@ const Admin: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="analytics">
-            {/* ... (código de analytics) ... */}
+            <div className="space-y-6">
+              <h2 className="text-2xl font-bold text-podcast-white mb-4">Visão Geral de Analytics</h2>
+              {isLoadingAnalytics ? (
+                <div className="flex justify-center items-center h-40">
+                  <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
+                  <span className="ml-2 text-podcast-white">Carregando analytics...</span>
+                </div>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Total de Reproduções</CardTitle>
+                        <PlayCircle className="h-4 w-4 text-podcast-green" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">{analytics?.totalPlays || 0}</div>
+                        <p className="text-xs text-podcast-gray">Total de vezes que um episódio foi reproduzido.</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Ouvintes Únicos</CardTitle>
+                        <Users className="h-4 w-4 text-podcast-green" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">{analytics?.uniqueListeners || 0}</div>
+                        <p className="text-xs text-podcast-gray">Número de usuários distintos que reproduziram.</p>
+                      </CardContent>
+                    </Card>
+                    <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Tempo Médio de Reprodução</CardTitle>
+                        <Clock className="h-4 w-4 text-podcast-green" />
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-2xl font-bold">{analytics?.averagePlayTime || "Em breve"}</div>
+                        <p className="text-xs text-podcast-gray">Média de tempo que os usuários ouvem.</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                    <CardHeader>
+                      <CardTitle>Episódios Mais Populares</CardTitle>
+                      <CardDescription>Os episódios mais reproduzidos do seu podcast.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {analytics?.topEpisodes && analytics.topEpisodes.length > 0 ? (
+                        <Table>
+                          <TableHeader>
+                            <TableRow className="border-podcast-border hover:bg-transparent">
+                              <TableHead className="w-[50px]">Rank</TableHead>
+                              <TableHead>Título do Episódio</TableHead>
+                              <TableHead className="text-right">Reproduções</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {analytics.topEpisodes.map((episode) => (
+                              <TableRow key={episode.rank} className="border-podcast-border hover:bg-podcast-border/50">
+                                <TableCell className="font-medium">{episode.rank}</TableCell>
+                                <TableCell>{episode.title}</TableCell>
+                                <TableCell className="text-right">{episode.plays}</TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      ) : (
+                        <div className="text-center py-4 text-podcast-gray">Nenhum episódio popular ainda.</div>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                    <CardHeader>
+                      <CardTitle>Reproduções por País</CardTitle>
+                      <CardDescription>Distribuição geográfica das reproduções do seu podcast.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {analytics?.playsByCountry && analytics.playsByCountry.length > 0 ? (
+                        <CountryPlaysMap playsByCountry={analytics.playsByCountry} />
+                      ) : (
+                        <div className="text-center py-4 text-podcast-gray">Nenhum dado de reprodução por país ainda.</div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
       </div>
