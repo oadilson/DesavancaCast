@@ -11,7 +11,7 @@ import Layout from '@/components/Layout';
 import EditProfileModal from '@/components/EditProfileModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from '@tanstack/react-query';
-import { getPodcastByUserId } from '@/data/podcastData';
+import { getPodcastByUserId, fetchRecentPlays } from '@/data/podcastData'; // Importar fetchRecentPlays
 import { useLikedEpisodes } from '@/hooks/use-liked-episodes';
 import { useDownloadContext } from '@/context/DownloadContext';
 
@@ -39,6 +39,12 @@ const Profile: React.FC = () => {
 
   const { likedEpisodeIds, isLoading: isLoadingLiked } = useLikedEpisodes();
   const { downloadedEpisodes, isLoading: isLoadingDownloads } = useDownloadContext();
+
+  const { data: recentPlays = [], isLoading: isLoadingRecentPlays } = useQuery({
+    queryKey: ['profileRecentPlays', user?.id],
+    queryFn: () => fetchRecentPlays(user!.id),
+    enabled: !!user,
+  });
 
   const fetchUserData = useCallback(async () => {
     setLoading(true);
@@ -83,7 +89,7 @@ const Profile: React.FC = () => {
     // queryClient.invalidateQueries(['userPodcast', user?.id]);
   };
 
-  if (loading || isLoadingLiked || isLoadingDownloads) {
+  if (loading || isLoadingLiked || isLoadingDownloads || isLoadingRecentPlays) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-full">
@@ -197,12 +203,37 @@ const Profile: React.FC = () => {
                     <CardDescription className="text-podcast-gray">Seu histórico de reprodução aparecerá aqui.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-center text-podcast-gray py-4">
-                      <p>Nenhum episódio reproduzido recentemente.</p>
-                      <Link to="/" className="text-podcast-green hover:underline mt-2 block">
-                        Comece a ouvir!
-                      </Link>
-                    </div>
+                    {isLoadingRecentPlays ? (
+                      <div className="flex justify-center items-center py-4">
+                        <Loader2 className="h-6 w-6 animate-spin text-podcast-green" />
+                      </div>
+                    ) : recentPlays.length > 0 ? (
+                      <div className="space-y-3">
+                        {recentPlays.slice(0, 3).map((episode) => ( // Limita a 3 episódios
+                          <div key={episode.id} className="flex items-center gap-3 p-2 bg-podcast-black rounded-md">
+                            <img src={episode.coverImage || '/placeholder.svg'} alt={episode.title} className="h-10 w-10 rounded-md object-cover" />
+                            <div className="flex-grow">
+                              <p className="text-sm font-medium truncate">{episode.title}</p>
+                              <p className="text-xs text-podcast-gray truncate">{episode.host || 'Podcast'}</p>
+                            </div>
+                          </div>
+                        ))}
+                        {recentPlays.length > 3 && (
+                          <div className="text-center mt-4">
+                            <Link to="/recent" className="text-podcast-green hover:underline text-sm">
+                              Ver todo o histórico
+                            </Link>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-center text-podcast-gray py-4">
+                        <p>Nenhum episódio reproduzido recentemente.</p>
+                        <Link to="/" className="text-podcast-green hover:underline mt-2 block">
+                          Comece a ouvir!
+                        </Link>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </div>
