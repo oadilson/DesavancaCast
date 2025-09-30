@@ -16,8 +16,10 @@ import { formatDuration } from '@/lib/utils';
 import { useDownloadContext } from '@/context/DownloadContext';
 import { getDownloadedEpisode } from '@/lib/db';
 import { Badge } from '@/components/ui/badge';
-import { useSubscription } from '@/context/SubscriptionContext'; // Importar o hook de assinatura
-import PremiumContentOverlay from '@/components/PremiumContentOverlay'; // Importar o novo componente
+import { useSubscription } from '@/context/SubscriptionContext';
+import PremiumContentOverlay from '@/components/PremiumContentOverlay';
+import { useIsMobile } from '@/hooks/use-mobile'; // Importar o hook useIsMobile
+import { cn } from '@/lib/utils'; // Importar cn
 
 const EpisodeDetail: React.FC = () => {
   const { episodeId } = useParams<{ episodeId: string }>();
@@ -25,7 +27,8 @@ const EpisodeDetail: React.FC = () => {
   const { playEpisode } = usePodcastPlayer();
   const { likedEpisodeIds, toggleLike, userId } = useLikedEpisodes();
   const { downloadEpisode, deleteEpisode, downloadedEpisodeIds, downloadProgress } = useDownloadContext();
-  const { subscriptionStatus, isLoading: isLoadingSubscription } = useSubscription(); // Usar o hook de assinatura
+  const { subscriptionStatus, isLoading: isLoadingSubscription } = useSubscription();
+  const isMobile = useIsMobile(); // Usar o hook para detectar mobile
 
   const { data: episode, isLoading, isError, error } = useQuery({
     queryKey: ['episodeDetail', episodeId],
@@ -105,7 +108,7 @@ const EpisodeDetail: React.FC = () => {
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className="max-w-4xl mx-auto"> {/* Removido container e px classes */}
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"> {/* Adicionado padding horizontal */}
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
@@ -114,13 +117,13 @@ const EpisodeDetail: React.FC = () => {
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
           </Button>
 
-          <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl p-6 mb-8">
+          <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl p-4 sm:p-6 mb-8"> {/* Ajustado padding */}
             <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-6">
               <div className="relative flex-shrink-0">
                 <img
                   src={episode.coverImage || '/placeholder.svg'}
                   alt={episode.title}
-                  className="w-48 h-48 rounded-lg object-cover shadow-md"
+                  className="w-32 h-32 sm:w-48 sm:h-48 rounded-lg object-cover shadow-md" // Ajustado tamanho da imagem
                 />
                 {episode.is_premium && (
                   <Badge className="absolute bottom-2 left-2 bg-black/60 text-yellow-400 border-yellow-500/50 border backdrop-blur-sm">
@@ -130,23 +133,23 @@ const EpisodeDetail: React.FC = () => {
                 )}
               </div>
               <div className="text-center md:text-left flex-grow">
-                <CardTitle className="text-3xl font-bold mb-2">{episode.title}</CardTitle>
+                <CardTitle className="text-2xl sm:text-3xl font-bold mb-2">{episode.title}</CardTitle> {/* Ajustado tamanho do título */}
                 {episode.podcastTitle && (
-                  <p className="text-lg text-podcast-gray mb-1">
+                  <p className="text-base sm:text-lg text-podcast-gray mb-1"> {/* Ajustado tamanho do texto */}
                     Podcast: <span className="font-medium text-podcast-white">{episode.podcastTitle}</span>
                   </p>
                 )}
                 {episode.host && (
-                  <p className="text-md text-podcast-gray mb-2">
+                  <p className="text-sm sm:text-md text-podcast-gray mb-2"> {/* Ajustado tamanho do texto */}
                     Apresentado por: <span className="font-medium text-podcast-white">{episode.host}</span>
                   </p>
                 )}
-                <CardDescription className="text-sm text-podcast-gray mb-4">
+                <CardDescription className="text-xs sm:text-sm text-podcast-gray mb-4"> {/* Ajustado tamanho do texto */}
                   {new Date(episode.releaseDate).toLocaleDateString('pt-BR')} • {formatDuration(episode.duration)}
                 </CardDescription>
-                <div className="flex items-center justify-center md:justify-start gap-4 mt-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 sm:gap-4 mt-4"> {/* Layout flexível para botões */}
                   <Button
-                    className="bg-podcast-green text-podcast-black hover:bg-podcast-green/90 rounded-full"
+                    className="w-full sm:w-auto bg-podcast-green text-podcast-black hover:bg-podcast-green/90 rounded-full"
                     onClick={handlePlayClick}
                     disabled={!episode.audioUrl && !isDownloaded}
                   >
@@ -156,7 +159,7 @@ const EpisodeDetail: React.FC = () => {
                   {episode.audioUrl && (
                     <Button
                       variant="outline"
-                      className="bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full"
+                      className="w-full sm:w-auto bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full"
                       onClick={handleDownloadClick}
                       disabled={isDownloading}
                     >
@@ -172,7 +175,10 @@ const EpisodeDetail: React.FC = () => {
                   {userId && (
                     <Button
                       variant="outline"
-                      className={isLiked ? "bg-red-500 text-white border-red-500 hover:bg-red-600 rounded-full" : "bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full"}
+                      className={cn(
+                        "w-full sm:w-auto rounded-full",
+                        isLiked ? "bg-red-500 text-white border-red-500 hover:bg-red-600" : "bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white"
+                      )}
                       onClick={() => toggleLike(episode.id, isLiked)}
                     >
                       <Heart className={`mr-2 h-5 w-5 ${isLiked ? 'fill-white' : ''}`} />
@@ -185,13 +191,13 @@ const EpisodeDetail: React.FC = () => {
           </Card>
 
           {episode.newsletter_content ? (
-            <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl p-6">
+            <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl p-4 sm:p-6"> {/* Ajustado padding */}
               <CardHeader className="pb-4 border-b border-podcast-border mb-6">
-                <CardTitle className="flex items-center gap-2 text-2xl">
+                <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl"> {/* Ajustado tamanho do título */}
                   {episode.title}
                 </CardTitle>
                 {episode.newsletter_subtitle && (
-                  <CardDescription className="text-lg text-podcast-gray mt-1">
+                  <CardDescription className="text-base sm:text-lg text-podcast-gray mt-1"> {/* Ajustado tamanho do texto */}
                     {episode.newsletter_subtitle}
                   </CardDescription>
                 )}
@@ -208,7 +214,7 @@ const EpisodeDetail: React.FC = () => {
               </PremiumContentOverlay>
             </Card>
           ) : (
-            <div className="text-center py-10 bg-podcast-black-light border-podcast-border text-podcast-white rounded-xl shadow-lg">
+            <div className="text-center py-10 bg-podcast-black-light border-podcast-border text-podcast-white rounded-xl shadow-lg px-4"> {/* Adicionado padding horizontal */}
               <Newspaper className="mx-auto h-12 w-12 mb-4 text-podcast-gray" />
               <h3 className="text-xl font-bold mb-2">Newsletter não disponível</h3>
               <p className="text-podcast-gray">
