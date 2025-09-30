@@ -54,18 +54,18 @@ const Downloads: React.FC = () => {
             {downloadedEpisodes.map((episode) => (
               <div key={episode.id} className={cn(
                 "flex items-center justify-between bg-podcast-black-light rounded-lg border border-podcast-border",
-                isMobile ? "p-3 gap-3" : "p-4 gap-4" // Ajusta padding e gap para mobile
+                isMobile ? "p-2 gap-2" : "p-4 gap-4" // Adjusted padding and gap for mobile
               )}>
-                <div className="flex items-center gap-4 flex-grow min-w-0">
+                <div className="flex items-center gap-3 flex-grow min-w-0"> {/* Adjusted gap here */}
                   <img
                     src={episode.coverImage || '/placeholder.svg'}
                     alt={episode.title}
                     className={cn(
                       "rounded-md object-cover flex-shrink-0",
-                      isMobile ? "h-12 w-12" : "h-16 w-16" // Ajusta tamanho da imagem para mobile
+                      isMobile ? "h-10 w-10" : "h-16 w-16" // Adjusted image size for mobile
                     )}
                   />
-                  <div className="min-w-0 flex-grow">
+                  <div className={cn("min-w-0 flex-grow", isMobile && "flex flex-col")}> {/* Added flex-col for mobile text stacking */}
                     <p className="font-semibold text-podcast-white truncate">{episode.title}</p>
                     <div className="flex items-center text-sm text-podcast-gray mt-1">
                       <Calendar className={cn("mr-1", isMobile ? "h-3 w-3" : "h-4 w-4")} />
@@ -76,15 +76,15 @@ const Downloads: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div className={cn("flex items-center ml-4", isMobile ? "gap-1" : "gap-2")}> {/* Ajusta gap para botões */}
+                <div className={cn("flex items-center ml-4", isMobile ? "gap-1" : "gap-2")}> {/* Adjusts gap for buttons */}
                   <Button variant="ghost" size="icon" onClick={() => handlePlayDownloaded(episode)}
-                    className={cn(isMobile ? "h-8 w-8" : "h-10 w-10")}> {/* Ajusta tamanho do botão */}
-                    <PlayCircle className={cn("text-podcast-green", isMobile ? "h-4 w-4" : "h-6 w-6")} /> {/* Ajusta tamanho do ícone */}
+                    className={cn(isMobile ? "h-9 w-9" : "h-10 w-10")}> {/* Adjusted button size */}
+                    <PlayCircle className={cn("text-podcast-green", isMobile ? "h-4 w-4" : "h-6 w-6")} /> {/* Adjusted icon size */}
                   </Button>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="icon" className={cn("text-red-500 hover:text-red-400", isMobile ? "h-8 w-8" : "h-10 w-10")}> {/* Ajusta tamanho do botão */}
-                        <Trash2 className={cn(isMobile ? "h-4 w-4" : "h-5 w-5")} /> {/* Ajusta tamanho do ícone */}
+                      <Button variant="ghost" size="icon" className={cn("text-red-500 hover:text-red-400", isMobile ? "h-9 w-9" : "h-10 w-10")}> {/* Adjusted button size */}
+                        <Trash2 className={cn(isMobile ? "h-4 w-4" : "h-5 w-5")} /> {/* Adjusted icon size */}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="bg-podcast-black-light border-podcast-border text-podcast-white">
