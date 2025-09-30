@@ -1,5 +1,5 @@
 import React from 'react';
-import { Podcast, Star } from 'lucide-react';
+import { Podcast, Crown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -16,7 +16,7 @@ const Footer: React.FC<FooterProps> = ({ className }) => {
         <div className="w-full md:flex-1 md:flex md:justify-start mb-4 md:mb-0">
           <Link to="/premium">
             <Button className="bg-podcast-green text-podcast-black hover:bg-podcast-green/90 rounded-full w-full md:w-auto font-semibold transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-podcast-glow">
-              <Star className="mr-2 h-5 w-5" />
+              <Crown className="mr-2 h-5 w-5" />
               Assinar Premium
             </Button>
           </Link>
