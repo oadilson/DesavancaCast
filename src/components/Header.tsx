@@ -100,8 +100,9 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-2 md:p-4 transition-all duration-300",
-        scrolled ? "bg-podcast-black/80 backdrop-blur-sm" : "bg-transparent"
+        "fixed top-0 right-0 z-50 flex items-center justify-between py-2 px-3 transition-all duration-300",
+        scrolled ? "bg-podcast-black/80 backdrop-blur-sm" : "bg-transparent",
+        "md:left-64 md:py-4 md:px-6"
       )}
     >
       <div className="flex items-center space-x-2">
@@ -112,7 +113,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
       </div>
 
       {/* Global Search Bar */}
-      <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-sm mx-auto hidden md:block"> {/* Alterado max-w-md para max-w-sm e mx-4 para mx-auto */}
+      <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-sm mr-auto hidden md:block"> {/* Removido mx-auto e adicionado mr-auto */}
         <Input
           type="text"
           placeholder="O que você quer ouvir?"
@@ -125,7 +126,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         </Button>
       </form>
 
-      <div className="flex items-center space-x-2 md:space-x-4 pr-2 md:pr-4">
+      <div className="flex items-center space-x-2 md:space-x-4">
         {session ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
