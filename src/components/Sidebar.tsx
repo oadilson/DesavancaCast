@@ -43,20 +43,19 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
 
   const navItems = [
     { path: '/', label: 'Início', icon: Home },
-    { path: '/episodes', label: 'Todos os Episódios', icon: ListMusic },
-    { path: '/popular', label: 'Mais Populares', icon: TrendingUp },
+    { path: '/episodes', label: 'Episódios', icon: ListMusic }, // Alterado
+    { path: '/popular', label: 'Populares', icon: TrendingUp }, // Alterado
     { path: '/releases', label: 'Lançamentos', icon: Calendar },
   ];
 
   const libraryItems = [
-    { path: '/liked', label: 'Episódios Curtidos', icon: Heart },
+    { path: '/liked', label: 'Curtidos', icon: Heart }, // Alterado
     { path: '/downloads', label: 'Downloads', icon: Download },
-    { path: '/recent', label: 'Reproduzidos Recentemente', icon: History }, // Alterado aqui
+    { path: '/recent', label: 'Histórico', icon: History }, // Alterado
   ];
 
   return (
-    <div className={cn("flex flex-col h-full bg-podcast-black text-podcast-gray px-8 py-4", className)}> {/* Ajustado py-36 para py-4 */}
-      {/* O título do podcast foi movido para o Header */}
+    <div className={cn("flex flex-col h-full bg-podcast-black text-podcast-gray px-8 py-4", className)}>
       <div className="mb-6">
         {/* Espaço reservado para o título que agora está no Header */}
       </div>
