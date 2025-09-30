@@ -21,7 +21,19 @@ const Login: React.FC = () => {
       }
     });
 
-    return () => subscription.unsubscribe();
+    // Obtém o valor computado da variável CSS --podcast-black
+    const rootStyle = getComputedStyle(document.documentElement);
+    const podcastBlackHSL = rootStyle.getPropertyValue('--podcast-black').trim();
+    
+    // Salva o background original do body e define o novo
+    const originalBodyBg = document.body.style.backgroundColor;
+    document.body.style.backgroundColor = `hsl(${podcastBlackHSL})`;
+
+    return () => {
+      subscription.unsubscribe();
+      // Restaura o background original do body ao sair da página de login
+      document.body.style.backgroundColor = originalBodyBg;
+    };
   }, [navigate]);
 
   return (
