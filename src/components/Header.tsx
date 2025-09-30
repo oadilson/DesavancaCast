@@ -31,7 +31,6 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -87,13 +86,6 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     await supabase.auth.signOut();
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchTerm.trim())}`);
-    }
-  };
-
   const isAdmin = session?.user?.email === ADMIN_EMAIL;
 
   return (
@@ -108,18 +100,6 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         <Link to="/" className="hidden md:flex items-center gap-2 text-podcast-white hover:text-podcast-green transition-colors">
           <Podcast className="text-podcast-green" size={24} />
         </Link>
-        <form onSubmit={handleSearch} className="relative hidden sm:block">
-          <Input
-            type="text"
-            placeholder="O que você quer ouvir?"
-            className="w-40 md:w-64 bg-podcast-black-light border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 pr-10 rounded-full"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2 text-podcast-gray hover:text-podcast-white">
-            <Search className="h-5 w-5" />
-          </Button>
-        </form>
       </div>
       <div className="flex items-center space-x-2 md:space-x-4 pr-2 md:pr-4"> {/* Adicionado pr-2 md:pr-4 aqui */}
         {session ? (

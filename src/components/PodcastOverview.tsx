@@ -44,6 +44,15 @@ const PodcastOverview: React.FC = () => {
   const [isEditPodcastModalOpen, setIsEditPodcastModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // NEW: Global search state and handler
+  const [globalSearchTerm, setGlobalSearchTerm] = useState('');
+  const handleGlobalSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (globalSearchTerm.trim()) {
+      navigate(`/search?query=${encodeURIComponent(globalSearchTerm.trim())}`);
+    }
+  };
+
   const { data: popularEpisodes, isLoading: isLoadingPopular } = useQuery({
     queryKey: ['popularEpisodes', myPodcast?.id],
     queryFn: () => getPopularEpisodes(myPodcast!.id),
@@ -180,6 +189,20 @@ const PodcastOverview: React.FC = () => {
 
   return (
     <div className="container mx-auto max-w-screen-xl px-6 sm:px-8 lg:px-12 space-y-8">
+      {/* NEW: Global Search Bar */}
+      <form onSubmit={handleGlobalSearch} className="relative w-full mb-8 mt-4"> {/* Added mb-8 for spacing */}
+        <Input
+          type="text"
+          placeholder="O que você quer ouvir?"
+          className="w-full bg-podcast-black-light border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 pr-10 rounded-full h-12 text-base"
+          value={globalSearchTerm}
+          onChange={(e) => setGlobalSearchTerm(e.target.value)}
+        />
+        <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2 text-podcast-gray hover:text-podcast-white">
+          <Search className="h-6 w-6" />
+        </Button>
+      </form>
+
       <section
         className="relative flex flex-col md:flex-row items-center md:items-end p-6 md:p-8 rounded-xl shadow-lg overflow-hidden"
         style={{ minHeight: '300px' }}
@@ -401,7 +424,7 @@ const PodcastOverview: React.FC = () => {
       {myPodcast && (
         <EditPodcastDetailsModal
           isOpen={isEditPodcastModalOpen}
-          onClose={() => setIsEditPodcastModalOpen(false)}
+          onClose={() => setIsEditModalOpen(false)}
           onSave={handlePodcastDetailsSave}
           initialData={myPodcast}
         />
