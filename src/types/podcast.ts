@@ -18,6 +18,7 @@ export interface Episode {
   isLiked?: boolean; // NOVO: Indica se o episódio foi curtido pelo usuário atual
   host?: string; // Adicionado para a página de detalhes
   podcastTitle?: string; // Adicionado para a página de detalhes
+  is_premium?: boolean; // NOVO: Indica se o episódio é premium
 }
 
 export interface Podcast {

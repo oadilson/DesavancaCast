@@ -1,13 +1,16 @@
 import React, { createContext, useContext, useRef, useState, useEffect, useCallback } from 'react';
 import { Episode } from '@/types/podcast';
-import PodcastPlayer from '@/components/PodcastPlayer'; // Importar o player
+import PodcastPlayer from '@/components/PodcastPlayer';
 import { supabase } from '@/integrations/supabase/client';
+import { useSubscription } from './SubscriptionContext'; // Importar o hook de assinatura
+import { useNavigate } from 'react-router-dom';
+import { showError } from '@/utils/toast';
 
 interface PodcastPlayerContextType {
   currentEpisode: Episode | null;
   isPlaying: boolean;
-  progress: number; // Current time in seconds
-  duration: number; // Total duration in seconds
+  progress: number;
+  duration: number;
   volume: number;
   playEpisode: (episode: Episode) => void;
   pauseEpisode: () => void;
@@ -24,11 +27,13 @@ export const PodcastPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolumeState] = useState(70); // Default volume
+  const [volume, setVolumeState] = useState(70);
   const lastPlayed = useRef<{ episodeId: string | null, timestamp: number }>({ episodeId: null, timestamp: 0 });
   const blobUrlRef = useRef<string | null>(null);
 
-  // Cleanup on unmount
+  const { subscriptionStatus } = useSubscription(); // Usar o hook
+  const navigate = useNavigate(); // Usar o hook de navegação
+
   useEffect(() => {
     return () => {
       if (blobUrlRef.current) {
@@ -41,12 +46,11 @@ export const PodcastPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     const { data: { session } } = await supabase.auth.getSession();
     const userId = session?.user?.id || null;
 
-    if (lastPlayed.current.episodeId === episodeId && (Date.now() - lastPlayed.current.timestamp) < 10000) { // 10s debounce
+    if (lastPlayed.current.episodeId === episodeId && (Date.now() - lastPlayed.current.timestamp) < 10000) {
         return;
     }
     lastPlayed.current = { episodeId, timestamp: Date.now() };
 
-    // Invocar a Edge Function para registrar a reprodução
     const { error } = await supabase.functions.invoke('record-play', {
       body: { episode_id: episodeId, user_id: userId },
     });
@@ -60,17 +64,11 @@ export const PodcastPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     const audio = audioRef.current;
     if (!audio) return;
 
-    const handleTimeUpdate = () => {
-      setProgress(audio.currentTime);
-    };
-
+    const handleTimeUpdate = () => setProgress(audio.currentTime);
     const handleLoadedMetadata = () => {
       setDuration(audio.duration);
-      if (audio.volume !== volume / 100) {
-        audio.volume = volume / 100;
-      }
+      if (audio.volume !== volume / 100) audio.volume = volume / 100;
     };
-
     const handleEnded = () => {
       setIsPlaying(false);
       setProgress(0);
@@ -92,25 +90,19 @@ export const PodcastPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     if (!audio || !currentEpisode) return;
 
     const audioSource = currentEpisode.audioUrl;
-
     if (audio.src !== audioSource) {
       audio.src = audioSource;
       audio.load();
     }
 
-    audio.play()
-      .then(() => setIsPlaying(true))
-      .catch(error => {
-        console.error("Erro ao tentar reproduzir áudio:", error);
-        setIsPlaying(false);
-      });
+    audio.play().then(() => setIsPlaying(true)).catch(error => {
+      console.error("Erro ao tentar reproduzir áudio:", error);
+      setIsPlaying(false);
+    });
   }, [currentEpisode]);
 
-
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume / 100;
-    }
+    if (audioRef.current) audioRef.current.volume = volume / 100;
   }, [volume]);
 
   const pauseEpisode = useCallback(() => {
@@ -123,47 +115,47 @@ export const PodcastPlayerProvider: React.FC<{ children: React.ReactNode }> = ({
   const togglePlayPause = useCallback(() => {
     if (isPlaying) {
       pauseEpisode();
-    } else if (currentEpisode) {
-      if (audioRef.current) {
-        audioRef.current.play()
-          .then(() => {
-            setIsPlaying(true);
-            if (audioRef.current && audioRef.current.currentTime < 5 && !currentEpisode.audioUrl.startsWith('blob:')) {
-                recordPlay(currentEpisode.id);
-            }
-          })
-          .catch(error => {
-            console.error("Erro ao tentar reproduzir áudio no toggle:", error);
-            setIsPlaying(false);
-          });
-      }
+    } else if (currentEpisode && audioRef.current) {
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+        if (audioRef.current && audioRef.current.currentTime < 5 && !currentEpisode.audioUrl.startsWith('blob:')) {
+            recordPlay(currentEpisode.id);
+        }
+      }).catch(error => {
+        console.error("Erro ao tentar reproduzir áudio no toggle:", error);
+        setIsPlaying(false);
+      });
     }
   }, [isPlaying, currentEpisode, pauseEpisode, recordPlay]);
 
   const playEpisode = useCallback((episode: Episode) => {
+    // Lógica de bloqueio de conteúdo premium
+    if (episode.is_premium && subscriptionStatus !== 'premium') {
+      showError('Este é um episódio premium. Assine para ouvir!');
+      navigate('/premium');
+      return;
+    }
+
     if (currentEpisode?.id === episode.id && currentEpisode.audioUrl === episode.audioUrl) {
         togglePlayPause();
         return;
     }
 
-    // A new episode is being played. Clean up the OLD blob URL if it exists.
     if (blobUrlRef.current) {
         URL.revokeObjectURL(blobUrlRef.current);
         blobUrlRef.current = null;
     }
 
-    // If the NEW episode is a blob, store its URL in the ref.
     if (episode.audioUrl.startsWith('blob:')) {
         blobUrlRef.current = episode.audioUrl;
     }
 
     setCurrentEpisode(episode);
 
-    // Record play only for non-blob (network) sources
     if (!episode.audioUrl.startsWith('blob:')) {
         recordPlay(episode.id);
     }
-  }, [currentEpisode, recordPlay, togglePlayPause]);
+  }, [currentEpisode, recordPlay, togglePlayPause, subscriptionStatus, navigate]);
 
   const seek = useCallback((time: number) => {
     if (audioRef.current) {

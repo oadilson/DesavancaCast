@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getEpisodeById } from '@/data/podcastData';
 import Layout from '@/components/Layout';
-import { Loader2, AlertTriangle, PlayCircle, Heart, ArrowLeft, Newspaper, Download, Trash2 } from 'lucide-react';
+import { Loader2, AlertTriangle, PlayCircle, Heart, ArrowLeft, Newspaper, Download, Trash2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -15,6 +15,7 @@ import { showSuccess, showError } from '@/utils/toast';
 import { formatDuration } from '@/lib/utils';
 import { useDownloadContext } from '@/context/DownloadContext';
 import { getDownloadedEpisode } from '@/lib/db';
+import { Badge } from '@/components/ui/badge';
 
 const EpisodeDetail: React.FC = () => {
   const { episodeId } = useParams<{ episodeId: string }>();
@@ -61,21 +62,18 @@ const EpisodeDetail: React.FC = () => {
   const isDownloading = downloadProgress[episode.id] !== undefined;
 
   const handlePlayClick = async () => {
-    // Prioritize playing the downloaded version if it exists
     if (isDownloaded) {
       const storedEpisode = await getDownloadedEpisode(episode.id);
       if (storedEpisode && storedEpisode.audioBlob) {
         const localUrl = URL.createObjectURL(storedEpisode.audioBlob);
         playEpisode({ ...episode, audioUrl: localUrl });
         showSuccess(`Reproduzindo (offline): ${episode.title}`);
-        return; // Important: exit after playing offline version
+        return;
       }
     }
 
-    // Fallback to online playback
     if (episode.audioUrl) {
       playEpisode(episode);
-      showSuccess(`Reproduzindo: ${episode.title}`);
     } else {
       showError('URL de áudio não disponível para este episódio.');
     }
@@ -109,6 +107,12 @@ const EpisodeDetail: React.FC = () => {
                 className="w-48 h-48 rounded-lg object-cover shadow-md flex-shrink-0"
               />
               <div className="text-center md:text-left flex-grow">
+                {episode.is_premium && (
+                  <Badge className="mb-2 bg-podcast-purple text-white border-none">
+                    <Star className="h-4 w-4 mr-1.5" />
+                    Conteúdo Premium
+                  </Badge>
+                )}
                 <CardTitle className="text-3xl font-bold mb-2">{episode.title}</CardTitle>
                 {episode.podcastTitle && (
                   <p className="text-lg text-podcast-gray mb-1">
@@ -123,7 +127,6 @@ const EpisodeDetail: React.FC = () => {
                 <CardDescription className="text-sm text-podcast-gray mb-4">
                   {new Date(episode.releaseDate).toLocaleDateString('pt-BR')} • {formatDuration(episode.duration)}
                 </CardDescription>
-                {/* <p className="text-md text-podcast-white mb-4">{episode.description}</p> */} {/* REMOVIDO */}
                 <div className="flex items-center justify-center md:justify-start gap-4 mt-4">
                   <Button
                     className="bg-podcast-green text-podcast-black hover:opacity-90 rounded-full"
