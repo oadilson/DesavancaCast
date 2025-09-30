@@ -5,7 +5,7 @@ import { Episode } from '@/types/podcast';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Edit, RotateCcw, BarChart2, PlayCircle, Info, Users, Clock, ListMusic, Rss, CheckCircle, Edit2, Globe, Star } from 'lucide-react';
+import { Loader2, Edit, RotateCcw, BarChart2, PlayCircle, Info, Users, Clock, ListMusic, Rss, CheckCircle, Edit2, Globe, Star, FileText, Calendar, Activity, Crown, Settings } from 'lucide-react';
 import EditEpisodeModal from '@/components/EditEpisodeModal';
 import { supabase } from '@/integrations/supabase/client';
 import { showSuccess, showError } from '@/utils/toast';
@@ -159,11 +159,31 @@ const Admin: React.FC = () => {
                       <TableHeader>
                         <TableRow className="border-podcast-border hover:bg-transparent">
                           <TableHead className="w-[80px]"></TableHead>
-                          <TableHead>Título</TableHead>
-                          <TableHead>Data</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Premium</TableHead>
-                          <TableHead className="text-right">Ações</TableHead>
+                          <TableHead>
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4" /> Título
+                            </div>
+                          </TableHead>
+                          <TableHead>
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4" /> Data
+                            </div>
+                          </TableHead>
+                          <TableHead>
+                            <div className="flex items-center gap-2">
+                              <Activity className="h-4 w-4" /> Status
+                            </div>
+                          </TableHead>
+                          <TableHead>
+                            <div className="flex items-center gap-2">
+                              <Crown className="h-4 w-4" /> Premium
+                            </div>
+                          </TableHead>
+                          <TableHead className="text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <Settings className="h-4 w-4" /> Ações
+                            </div>
+                          </TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
