@@ -48,7 +48,7 @@ const LibraryCards: React.FC<LibraryCardsProps> = ({ userId, isAdmin, className 
   ];
 
   return (
-    <div className={cn("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4", className)}>
+    <div className={cn("grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4", className)}>
       {libraryCardsData.map((card, index) => (
         <Link
           key={index}
