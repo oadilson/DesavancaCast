@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Search, Podcast } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } => '@/integrations/supabase/client';
+import { supabase } from '@/integrations/supabase/client'; // Corrigido: '=>' para 'from'
 import { Session, User } from '@supabase/supabase-js';
 import {
   DropdownMenu,
@@ -113,7 +113,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
       </div>
 
       {/* Global Search Bar */}
-      <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-lg mr-auto hidden md:block"> {/* Ajustado max-w-sm para max-w-lg */}
+      <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-lg mr-auto hidden md:block">
         <Input
           type="text"
           placeholder="O que você quer ouvir?"
