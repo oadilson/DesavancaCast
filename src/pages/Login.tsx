@@ -25,9 +25,9 @@ const Login: React.FC = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-podcast-black"> {/* Adicionado bg-podcast-black aqui */}
       <div
-        className="absolute inset-0 opacity-20 blur-sm animate-background-pan"
+        className="absolute inset-0 opacity-40 blur-sm animate-background-pan" {/* Opacidade aumentada para 40% */}
         style={{
           background: `
             radial-gradient(circle at 20% 80%, hsl(var(--podcast-green) / 0.1) 0%, transparent 50%),
