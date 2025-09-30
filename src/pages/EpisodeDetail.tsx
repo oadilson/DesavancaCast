@@ -146,7 +146,7 @@ const EpisodeDetail: React.FC = () => {
                 </CardDescription>
                 <div className="flex items-center justify-center md:justify-start gap-4 mt-4">
                   <Button
-                    className="bg-podcast-green text-podcast-black hover:opacity-90 rounded-full"
+                    className="bg-podcast-green text-podcast-black hover:bg-podcast-green/90 rounded-full"
                     onClick={handlePlayClick}
                     disabled={!episode.audioUrl && !isDownloaded}
                   >
