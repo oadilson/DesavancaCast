@@ -375,7 +375,7 @@ const PodcastOverview: React.FC = () => {
           isMobile ? (
             <div className="grid grid-cols-1 gap-4">
               {displayEpisodes.map((episode) => (
-                <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast.coverImage} />
+                <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast.coverImage} isMobile={isMobile} />
               ))}
             </div>
           ) : (
