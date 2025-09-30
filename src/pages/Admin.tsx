@@ -5,7 +5,7 @@ import { Episode } from '@/types/podcast';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Edit, RotateCcw, BarChart2, PlayCircle, Info, Users, Clock, ListMusic, Rss, CheckCircle, Edit2, Globe, Star, FileText, Calendar, Activity, Crown, Settings } from 'lucide-react';
+import { Loader2, Edit, RotateCcw, BarChart2, PlayCircle, Info, Users, Clock, ListMusic, Rss, CheckCircle, Edit2, Globe, Star, FileText, Calendar, Activity, Crown, Settings, Music4 } from 'lucide-react';
 import EditEpisodeModal from '@/components/EditEpisodeModal';
 import { supabase } from '@/integrations/supabase/client';
 import { showSuccess, showError } from '@/utils/toast';
@@ -138,9 +138,15 @@ const Admin: React.FC = () => {
 
         <Tabs defaultValue="episodes" className="w-full">
           <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 bg-podcast-black-light border-podcast-border mb-6">
-            <TabsTrigger value="episodes">Gerenciar Episódios</TabsTrigger>
-            <TabsTrigger value="trails">Gerenciar Trilhas de Áudio</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="episodes">
+              <ListMusic className="mr-2 h-4 w-4" /> Gerenciar Episódios
+            </TabsTrigger>
+            <TabsTrigger value="trails">
+              <Music4 className="mr-2 h-4 w-4" /> Gerenciar Trilhas de Áudio
+            </TabsTrigger>
+            <TabsTrigger value="analytics">
+              <BarChart2 className="mr-2 h-4 w-4" /> Analytics
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="episodes" className="space-y-6">
