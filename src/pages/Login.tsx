@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Podcast } from 'lucide-react';
-import { showSuccess, showError } from '@/utils/toast'; // Importar showError
+import { showSuccess, showError } from '@/utils/toast';
 import CustomSignInForm from '@/components/auth/CustomSignInForm';
 import CustomSignUpForm from '@/components/auth/CustomSignUpForm';
 import { Button } from '@/components/ui/button';
@@ -86,8 +86,9 @@ const Login: React.FC = () => {
           </CardHeader>
           <CardContent className="p-6 pt-2">
             <Button 
-              variant="outline" 
-              className="w-full flex items-center justify-center gap-2 py-2 h-11 text-podcast-white border-podcast-border hover:bg-podcast-border"
+              className="w-full flex items-center justify-center gap-2 py-2 h-11 
+                         bg-podcast-border text-podcast-white border border-podcast-border 
+                         hover:bg-podcast-border/70"
               onClick={handleGoogleSignIn}
               disabled={isSigningInWithGoogle}
             >
