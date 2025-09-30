@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { syncAndGetPodcastForAdmin } from '@/data/podcastData'; // Usando a função de admin
+import { syncAndGetPodcastForAdmin, getPodcastAnalytics } from '@/data/podcastData'; // Usando a função de admin
 import { Episode } from '@/types/podcast';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,22 +16,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ManageAudioTrails from '@/components/ManageAudioTrails';
 import { Badge } from '@/components/ui/badge';
 
-// Mock function to simulate fetching analytics data
-const getPodcastAnalytics = async () => {
-  // NOTE: This is mock data. In the future, this will call a Supabase function.
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
-  return {
-    totalPlays: 12345,
-    uniqueListeners: 4892,
-    averagePlayTime: "18 min 42 s",
-    topEpisodes: [
-      { rank: 1, title: 'O Futuro da IA', plays: 1502 },
-      { rank: 2, title: 'Deep Dive em Computação Quântica', plays: 1120 },
-      { rank: 3, title: 'A História da Internet', plays: 987 },
-    ],
-  };
-};
-
 const Admin: React.FC = () => {
   const queryClient = useQueryClient();
   const { data: myPodcast, isLoading, isError, error, refetch } = useQuery({
@@ -41,8 +25,8 @@ const Admin: React.FC = () => {
 
   const { data: analytics, isLoading: isLoadingAnalytics } = useQuery({
     queryKey: ['podcastAnalytics', myPodcast?.id],
-    queryFn: getPodcastAnalytics,
-    enabled: !!myPodcast,
+    queryFn: () => getPodcastAnalytics(myPodcast!.id), // Chamando a função real
+    enabled: !!myPodcast?.id, // Habilitar apenas se o ID do podcast estiver disponível
   });
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -254,13 +238,6 @@ const Admin: React.FC = () => {
                     <CardDescription>Visão geral do desempenho.</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Alert className="bg-podcast-purple/20 border-podcast-purple text-podcast-white mb-4">
-                      <Info className="h-4 w-4 !text-podcast-white" />
-                      <AlertTitle className="text-sm">Em Desenvolvimento</AlertTitle>
-                      <AlertDescription className="text-xs">
-                        Os dados abaixo são para demonstração.
-                      </AlertDescription>
-                    </Alert>
                     {isLoadingAnalytics ? (
                       <div className="flex justify-center items-center h-40">
                         <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
@@ -297,7 +274,7 @@ const Admin: React.FC = () => {
                     <CardTitle className="flex items-center gap-2"><BarChart2 className="h-5 w-5 text-podcast-green" /> Top Episódios</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {analytics && (
+                    {analytics && analytics.topEpisodes.length > 0 ? (
                       <div className="overflow-x-auto">
                         <Table>
                           <TableHeader>
@@ -315,6 +292,10 @@ const Admin: React.FC = () => {
                             ))}
                           </TableBody>
                         </Table>
+                      </div>
+                    ) : (
+                      <div className="text-center text-podcast-gray py-4">
+                        <p>Nenhum dado de reprodução disponível para os top episódios.</p>
                       </div>
                     )}
                   </CardContent>

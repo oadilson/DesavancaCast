@@ -367,3 +367,32 @@ export async function getUnplayedEpisodes(podcastId: string, userId: string): Pr
     isEdited: ep.is_edited,
   }));
 }
+
+export interface PodcastAnalytics {
+  totalPlays: number;
+  uniqueListeners: number;
+  averagePlayTime: string;
+  topEpisodes: { rank: number; title: string; plays: number }[];
+}
+
+export async function getPodcastAnalytics(podcastId: string): Promise<PodcastAnalytics> {
+  if (!podcastId) {
+    return {
+      totalPlays: 0,
+      uniqueListeners: 0,
+      averagePlayTime: "0 min",
+      topEpisodes: [],
+    };
+  }
+
+  const { data, error } = await supabase.functions.invoke('get-podcast-analytics', {
+    body: { podcast_id: podcastId },
+  });
+
+  if (error) {
+    console.error('Error invoking get-podcast-analytics Edge Function:', error);
+    throw new Error(`Falha ao carregar analytics: ${error.message}`);
+  }
+
+  return data as PodcastAnalytics;
+}
