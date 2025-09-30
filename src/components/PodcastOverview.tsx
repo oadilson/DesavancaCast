@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { getPodcastForDisplay, getAudioTrails, getPopularEpisodes, getUnplayedEpisodes } from '@/data/podcastData';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause, Crown } from 'lucide-react';
+import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause, Crown, RotateCcw } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePodcastPlayer } from '@/context/PodcastPlayerContext';
 import { formatDuration } from '@/lib/utils';
@@ -17,6 +17,9 @@ import EditPodcastDetailsModal from './EditPodcastDetailsModal';
 import { supabase } from '@/integrations/supabase/client';
 import { showSuccess, showError } from '@/utils/toast';
 import { Badge } from './ui/badge';
+import { useIsMobile } from '@/hooks/use-mobile'; // Importar o hook
+import EpisodeList from './EpisodeList'; // Componente de grid existente
+import EpisodeListItem from './EpisodeListItem'; // Novo componente de item de lista
 
 const ADMIN_EMAIL = 'adilsonsilva@outlook.com';
 
@@ -24,7 +27,7 @@ type EpisodeFilter = 'recent' | 'popular' | 'oldest' | 'unplayed';
 
 const PodcastOverview: React.FC = () => {
   const queryClient = useQueryClient();
-  const { data: myPodcast, isLoading, isError, error } = useQuery({
+  const { data: myPodcast, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['myPodcastDisplay'], // Chave de query alterada para a exibição pública
     queryFn: getPodcastForDisplay, // Usando a nova função para exibição
   });
@@ -38,13 +41,14 @@ const PodcastOverview: React.FC = () => {
   const { likedEpisodeIds, toggleLike, userId } = useLikedEpisodes();
   const { isPodcastLiked, toggleLikePodcast } = useLikedPodcast(myPodcast?.id);
   const navigate = useNavigate();
+  const isMobile = useIsMobile(); // Usar o hook
 
   const [activeFilter, setActiveFilter] = useState<EpisodeFilter>('recent');
   const [localSearchTerm, setLocalSearchTerm] = useState('');
   const [isEditPodcastModalOpen, setIsEditPodcastModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  // Removed: Global search state and handler from here
 
   const { data: popularEpisodes, isLoading: isLoadingPopular } = useQuery({
     queryKey: ['popularEpisodes', myPodcast?.id],
@@ -107,6 +111,21 @@ const PodcastOverview: React.FC = () => {
         console.error('Erro ao copiar o link:', error);
         showError('Não foi possível copiar o link.');
       }
+    }
+  };
+
+  const handleSync = async () => {
+    setIsSyncing(true);
+    showSuccess('Sincronização iniciada... Isso pode levar um momento.');
+    try {
+      await refetch(); // Refetch the podcast data which triggers the Edge Function sync
+      showSuccess('Podcast sincronizado com sucesso!');
+      queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] }); // Invalida a chave de admin também
+    } catch (err: any) {
+      showError(`Falha na sincronização: ${err.message}`);
+      console.error('Sync error:', err);
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -181,21 +200,20 @@ const PodcastOverview: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8"> {/* Removido max-w-screen-xl mx-auto */}
-      {/* Removed: Global Search Bar from here */}
-
+    <div className="space-y-8">
       <section
-        className="relative flex flex-col md:flex-row items-center md:items-end p-6 md:p-8 rounded-xl shadow-lg overflow-hidden"
-        style={{ minHeight: '300px' }}
+        className="relative flex flex-col md:flex-row items-center md:items-end p-6 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light" // Estilo de card
+        style={{ minHeight: '250px' }} // Altura ajustada para o card
       >
-        <div
+        {/* Fundo desfocado removido para o estilo de card */}
+        {/* <div
           className="absolute inset-0 bg-cover bg-center blur-lg scale-110"
           style={{
             backgroundImage: `url(${myPodcast.coverImage || '/placeholder.svg'})`,
           }}
         ></div>
         <div className="absolute inset-0 bg-gradient-to-t from-podcast-black to-transparent opacity-90"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-podcast-black via-podcast-black/70 to-transparent opacity-90"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-podcast-black via-podcast-black/70 to-transparent opacity-90"></div> */}
 
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-end w-full space-y-6 md:space-y-0 md:space-x-8">
           <img
@@ -204,7 +222,7 @@ const PodcastOverview: React.FC = () => {
             className="w-32 h-32 sm:w-48 sm:h-48 rounded-xl object-cover shadow-xl flex-shrink-0"
           />
           <div className="text-center md:text-left flex-grow">
-            <p className="text-sm font-semibold text-podcast-white mb-1 uppercase">Podcast</p>
+            <p className="text-sm font-semibold text-podcast-white mb-1 uppercase">Podcast Exclusivo</p> {/* Título ajustado */}
             <h1 className="text-4xl sm:text-5xl font-bold text-podcast-white mb-2">{myPodcast.title}</h1>
             <p className="text-md text-podcast-gray mb-4 max-w-prose">{myPodcast.description}</p>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2 text-sm text-podcast-gray mb-6">
@@ -225,7 +243,18 @@ const PodcastOverview: React.FC = () => {
                   onClick={() => playEpisode(displayEpisodes[0])}
                 >
                   <Play className="mr-2 h-4 w-4" />
-                  Reproduzir
+                  Começar a Ouvir
+                </Button>
+              )}
+              {isAdmin && ( // Botão Atualizar visível apenas para admin
+                <Button
+                  variant="outline"
+                  className="bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base font-semibold"
+                  onClick={handleSync}
+                  disabled={isSyncing}
+                >
+                  {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
+                  {isSyncing ? 'Atualizando...' : 'Atualizar'}
                 </Button>
               )}
               {userId && (
@@ -343,53 +372,17 @@ const PodcastOverview: React.FC = () => {
             <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
           </div>
         ) : displayEpisodes.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {displayEpisodes.map((episode) => {
-              const isLiked = likedEpisodeIds.has(episode.id);
-              const isCurrentEpisodePlaying = isPlaying && currentEpisode?.id === episode.id;
-              return (
-                <Card
-                  key={episode.id}
-                  className="bg-transparent border-none text-podcast-white hover:bg-podcast-black-light transition-colors group p-3 rounded-lg cursor-pointer"
-                  onClick={() => {
-                    navigate(`/episode/${episode.id}`);
-                  }}
-                >
-                  <CardContent className="p-0">
-                    <div className="relative mb-3 flex justify-center">
-                      <img src={episode.coverImage || myPodcast.coverImage || '/placeholder.svg'} alt={episode.title} className="w-full rounded-lg object-cover aspect-square" />
-                      {episode.is_premium && (
-                        <Badge className="absolute bottom-2 left-2 bg-black/60 text-yellow-400 border-yellow-500/50 border text-xs backdrop-blur-sm">
-                          <Crown className="h-3 w-3 mr-1.5" />
-                          Premium
-                        </Badge>
-                      )}
-                      <Button
-                        size="icon"
-                        className="absolute bottom-2 right-2 rounded-full bg-podcast-green text-podcast-black h-12 w-12 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-y-0 translate-y-2 hover:bg-podcast-green/90 shadow-lg"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playEpisode(episode);
-                        }}
-                      >
-                        {isCurrentEpisodePlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
-                      </Button>
-                      {userId && (
-                        <Heart
-                          className={`absolute top-2 right-2 h-6 w-6 transition-colors ${isLiked ? 'text-red-500 fill-red-500' : 'text-podcast-gray hover:text-red-400'}`}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleLike(episode.id, isLiked);
-                          }}
-                        />
-                      )}
-                    </div>
-                    <CardTitle className="text-md font-semibold truncate">{episode.title}</CardTitle>
-                    <CardDescription className="text-sm text-podcast-gray mt-1">{new Date(episode.releaseDate).toLocaleDateString('pt-BR')} • {formatDuration(episode.duration)}</CardDescription>
-                  </CardContent>
-                </Card>
-              );
-            })}
+          <div className={cn(
+            "grid gap-4",
+            isMobile ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5" // Grid para desktop, lista para mobile
+          )}>
+            {displayEpisodes.map((episode) => (
+              isMobile ? (
+                <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast.coverImage} />
+              ) : (
+                <EpisodeList key={episode.id} episodes={[episode]} podcastCoverImage={myPodcast.coverImage} /> // Reutiliza EpisodeList para um único item no desktop
+              )
+            ))}
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-40 text-podcast-white bg-podcast-black-light p-6 rounded-lg">

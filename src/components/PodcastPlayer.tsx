@@ -48,9 +48,12 @@ const PodcastPlayer: React.FC<PodcastPlayerProps> = ({
     return null;
   }
 
+  // Ajusta a posição 'bottom' para mobile para ficar acima da MobileBottomNav
+  const mobileBottomPosition = isMobile ? '80px' : '0'; // 64px (MobileBottomNav) + 16px (padding/gap) = 80px
+
   if (isMobile) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 bg-podcast-black-light text-podcast-white p-2 border-t border-podcast-border flex flex-col z-50">
+      <div className="fixed left-0 right-0 bg-podcast-black-light text-podcast-white p-2 border-t border-podcast-border flex flex-col z-50" style={{ bottom: mobileBottomPosition }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center flex-1 min-w-0">
             <img src={currentEpisode.coverImage || '/placeholder.svg'} alt={currentEpisode.title} className="h-10 w-10 rounded-md mr-2 object-cover" />
