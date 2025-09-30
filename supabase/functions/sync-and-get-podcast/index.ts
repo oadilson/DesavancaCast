@@ -21,6 +21,7 @@ serve(async (req) => {
   try {
     const { rssFeedUrl } = await req.json();
     if (!rssFeedUrl) {
+      console.error('Edge Function Error: Missing rssFeedUrl in request body.');
       return new Response(JSON.stringify({ error: 'Missing rssFeedUrl' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
@@ -36,7 +37,7 @@ serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
 
     if (userError) {
-      console.error('Error getting user in Edge Function:', userError);
+      console.error('Edge Function Error: Authentication error:', userError.message);
       return new Response(JSON.stringify({ error: `Authentication error: ${userError.message}` }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401, // Unauthorized
@@ -46,6 +47,7 @@ serve(async (req) => {
     // Se não houver usuário autenticado, não podemos realizar operações de upsert.
     // Apenas tentamos buscar dados de podcast existentes (que estarão sujeitos a RLS para SELECT).
     if (!user) {
+      console.warn('Edge Function Warning: No authenticated user. Attempting public podcast fetch.');
       const { data: publicPodcastData, error: publicFetchError } = await supabase
         .from('podcasts')
         .select(`*, episodes (*)`)
@@ -53,7 +55,7 @@ serve(async (req) => {
         .single();
 
       if (publicFetchError && publicFetchError.code !== 'PGRST116') {
-        console.error('Error fetching public podcast data:', publicFetchError);
+        console.error('Edge Function Error: Error fetching public podcast data:', publicFetchError);
         return new Response(JSON.stringify({ error: `Falha ao carregar dados do podcast público: ${publicFetchError.message}` }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 500,
@@ -70,9 +72,10 @@ serve(async (req) => {
       headers: { 'User-Agent': 'PodcastSync/1.0' },
     });
     if (!rssResponse.ok) {
+      console.error(`Edge Function Error: Failed to fetch RSS feed: ${rssResponse.statusText} (Status: ${rssResponse.status})`);
       return new Response(JSON.stringify({ error: `Falha ao buscar o feed RSS: ${rssResponse.statusText} (Status: ${rssResponse.status})` }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: rssResponse.status, // Propagate original status or 500
+        status: rssResponse.status >= 400 ? rssResponse.status : 500, // Propagate original status or 500
       });
     }
     const rssText = await rssResponse.text();
@@ -87,7 +90,7 @@ serve(async (req) => {
       .single();
 
     if (fetchPodcastError && fetchPodcastError.code !== 'PGRST116') { // PGRST116 = nenhuma linha encontrada
-      console.error('Database error fetching podcast for current user:', fetchPodcastError);
+      console.error('Edge Function Error: Database error fetching podcast for current user:', fetchPodcastError);
       return new Response(JSON.stringify({ error: `Erro no banco de dados ao buscar podcast: ${fetchPodcastError.message}` }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
@@ -106,7 +109,7 @@ serve(async (req) => {
         .single();
 
       if (fetchAnyUserPodcastError && fetchAnyUserPodcastError.code !== 'PGRST116') {
-        console.error('Database error checking for existing podcast by any user:', fetchAnyUserPodcastError);
+        console.error('Edge Function Error: Database error checking for existing podcast by any user:', fetchAnyUserPodcastError);
         return new Response(JSON.stringify({ error: `Erro no banco de dados ao verificar podcast existente: ${fetchAnyUserPodcastError.message}` }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 500,
@@ -116,6 +119,7 @@ serve(async (req) => {
       if (existingPodcastAnyUser) {
         // O podcast existe, mas é de propriedade de outro usuário.
         // Return a 409 Conflict status
+        console.error(`Edge Function Error: Podcast with RSS URL ${rssFeedUrl} is already managed by user ${existingPodcastAnyUser.user_id}. Current user: ${user.id}`);
         return new Response(JSON.stringify({ error: 'Este podcast já está sendo gerenciado por outro usuário. Por favor, use o RSS de um podcast que você gerencia ou entre em contato com o suporte.' }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 409, // Conflict
@@ -147,13 +151,14 @@ serve(async (req) => {
       .single();
 
     if (upsertError) {
-      console.error('Database error during podcast upsert:', upsertError);
+      console.error('Edge Function Error: Database error during podcast upsert:', upsertError);
       return new Response(JSON.stringify({ error: `Erro no banco de dados ao salvar podcast: ${upsertError.message}` }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
       });
     }
     if (!upsertedPodcast) {
+      console.error('Edge Function Error: Failed to create or find podcast after sync.');
       return new Response(JSON.stringify({ error: 'Falha ao criar ou encontrar o podcast após a sincronização.' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
@@ -172,7 +177,7 @@ serve(async (req) => {
         .eq('is_edited', true);
 
       if (fetchEditedEpisodesError) {
-        console.error('Database error fetching edited episodes:', fetchEditedEpisodesError);
+        console.error('Edge Function Error: Database error fetching edited episodes:', fetchEditedEpisodesError);
         return new Response(JSON.stringify({ error: `Erro no banco de dados ao buscar episódios editados: ${fetchEditedEpisodesError.message}` }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 500,
@@ -198,7 +203,7 @@ serve(async (req) => {
       if (episodesToUpsert.length > 0) {
         const { error: episodesError } = await supabase.from('episodes').upsert(episodesToUpsert, { onConflict: 'podcast_id,guid' });
         if (episodesError) {
-          console.error('Database error during episode upsert:', episodesError);
+          console.error('Edge Function Error: Database error during episode upsert:', episodesError);
           return new Response(JSON.stringify({ error: `Erro no banco de dados ao salvar episódios: ${episodesError.message}` }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 500,
@@ -215,7 +220,7 @@ serve(async (req) => {
       .single();
 
     if (finalError && finalError.code !== 'PGRST116') {
-      console.error('Database error fetching final podcast data:', finalError);
+      console.error('Edge Function Error: Database error fetching final podcast data:', finalError);
       return new Response(JSON.stringify({ error: `Erro no banco de dados ao buscar dados finais do podcast: ${finalError.message}` }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
@@ -228,7 +233,7 @@ serve(async (req) => {
     });
 
   } catch (error: any) {
-    console.error('Erro inesperado na função sync-and-get-podcast:', error.message);
+    console.error('Edge Function Error: Unexpected error in sync-and-get-podcast:', error.message);
     return new Response(JSON.stringify({ error: `Erro interno do servidor: ${error.message}` }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
