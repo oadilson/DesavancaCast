@@ -79,8 +79,7 @@ export async function getPodcastForDisplay(): Promise<Podcast | null> {
         newsletter_content,
         newsletter_subtitle,
         podcast_id,
-        guid,
-        is_premium
+        guid
       )
     `)
     .eq('rss_feed_url', ADMIN_RSS_FEED_URL)
@@ -165,8 +164,7 @@ export async function getAudioTrails(): Promise<AudioTrail[]> {
               newsletter_content,
               newsletter_subtitle,
               podcast_id,
-              guid,
-              is_premium
+              guid
             )
           )
         `)
@@ -262,8 +260,7 @@ export async function fetchEpisodesByIds(episodeIds: string[]): Promise<Episode[
       newsletter_content,
       newsletter_subtitle,
       podcast_id,
-      guid,
-      is_premium
+      guid
     `)
     .in('id', episodeIds)
     .order('release_date', { ascending: false });
