@@ -109,7 +109,7 @@ const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn })
           <p className="text-red-500 text-xs mt-1">{form.formState.errors.password.message}</p>
         )}
       </div>
-      <Button type="submit" className="w-full bg-podcast-green text-podcast-black hover:opacity-90 h-11 text-base font-semibold" disabled={isLoading}>
+      <Button type="submit" className="w-full bg-podcast-green text-podcast-black hover:bg-podcast-green/90 h-11 text-base font-semibold" disabled={isLoading}>
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Criar conta
       </Button>
