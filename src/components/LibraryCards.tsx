@@ -13,7 +13,7 @@ interface LibraryCardsProps {
 const LibraryCards: React.FC<LibraryCardsProps> = ({ userId, isAdmin, className }) => {
   const libraryCardsData = [
     {
-      title: 'Ouvidos Recentemente',
+      title: 'Histórico', // Alterado de 'Ouvidos Recentemente' para 'Histórico'
       description: 'Continue de onde parou',
       icon: History,
       bgColor: 'bg-podcast-green',
