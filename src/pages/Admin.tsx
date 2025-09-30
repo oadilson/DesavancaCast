@@ -16,7 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ManageAudioTrails from '@/components/ManageAudioTrails';
 import { Badge } from '@/components/ui/badge';
 import CountryPlaysMap from '@/components/CountryPlaysMap';
-import { Switch } from '@/components/ui/switch'; // Importar o Switch
+import { Switch } from '@/components/ui/switch';
 
 const Admin: React.FC = () => {
   const queryClient = useQueryClient();
@@ -35,7 +35,7 @@ const Admin: React.FC = () => {
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
   const [isReverting, setIsReverting] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
-  const [updatingPremium, setUpdatingPremium] = useState<string | null>(null); // Novo estado
+  const [updatingPremium, setUpdatingPremium] = useState<string | null>(null);
 
   useEffect(() => {
     if (isError && error) {
@@ -43,14 +43,24 @@ const Admin: React.FC = () => {
     }
   }, [isError, error]);
 
+  const invalidateAllEpisodeQueries = () => {
+    queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] });
+    queryClient.invalidateQueries({ queryKey: ['myPodcastDisplay'] });
+    queryClient.invalidateQueries({ queryKey: ['allEpisodesDisplay'] });
+    queryClient.invalidateQueries({ queryKey: ['latestReleasesDisplay'] });
+    queryClient.invalidateQueries({ queryKey: ['popularEpisodes'] });
+    queryClient.invalidateQueries({ queryKey: ['likedEpisodes'] });
+    queryClient.invalidateQueries({ queryKey: ['episodeDetail'] });
+    queryClient.invalidateQueries({ queryKey: ['audioTrailsHome'] });
+  };
+
   const handleEditClick = (episode: Episode) => {
     setSelectedEpisode(episode);
     setIsEditModalOpen(true);
   };
 
   const handleSaveChanges = () => {
-    queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] });
-    queryClient.invalidateQueries({ queryKey: ['myPodcastDisplay'] });
+    invalidateAllEpisodeQueries();
     refetch();
   };
 
@@ -87,16 +97,7 @@ const Admin: React.FC = () => {
       showError('Falha ao atualizar o status premium.');
     } else {
       showSuccess(`Episódio ${isPremium ? 'marcado como' : 'removido de'} premium.`);
-      // Atualizar os dados em cache para refletir a mudança imediatamente na UI
-      queryClient.setQueryData(['myPodcastAdmin'], (oldData: any) => {
-        if (!oldData) return oldData;
-        return {
-          ...oldData,
-          episodes: oldData.episodes.map((ep: Episode) => 
-            ep.id === episodeId ? { ...ep, is_premium: isPremium } : ep
-          ),
-        };
-      });
+      invalidateAllEpisodeQueries();
     }
     setUpdatingPremium(null);
   };
@@ -158,7 +159,7 @@ const Admin: React.FC = () => {
                           <TableHead>Título</TableHead>
                           <TableHead>Data</TableHead>
                           <TableHead>Status</TableHead>
-                          <TableHead>Premium</TableHead> {/* Nova coluna */}
+                          <TableHead>Premium</TableHead>
                           <TableHead className="text-right">Ações</TableHead>
                         </TableRow>
                       </TableHeader>
