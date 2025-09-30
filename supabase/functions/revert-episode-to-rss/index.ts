@@ -65,7 +65,8 @@ serve(async (req) => {
         cover_image: originalItem.itunes?.image || feed.itunes?.image,
         is_edited: false, // Reverter o flag
         is_premium: false, // Reverter o status premium
-        newsletter_subtitle: null, // Limpar o subtítulo
+        newsletter_content: null, // Limpar o conteúdo da newsletter
+        newsletter_subtitle: null, // Limpar o subtítulo da newsletter
       })
       .eq('id', episode_id);
 
