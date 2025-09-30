@@ -15,17 +15,22 @@ const signUpSchema = z.object({
   firstName: z.string().min(1, { message: 'O nome é obrigatório.' }),
   email: z.string().email({ message: 'E-mail inválido.' }),
   password: z.string().min(6, { message: 'A senha deve ter pelo menos 6 caracteres.' }),
+  confirmPassword: z.string(),
+}).refine(data => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem.",
+  path: ["confirmPassword"], // Aponta o erro para o campo de confirmação
 });
 
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 interface CustomSignUpFormProps {
-  onSwitchToSignIn: () => void;
+  onSuccess: () => void;
 }
 
-const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn }) => {
+const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -33,6 +38,7 @@ const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn })
       firstName: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   });
 
@@ -52,7 +58,7 @@ const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn })
       showError(error.message);
     } else if (data.user) {
       showSuccess('Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.');
-      onSwitchToSignIn();
+      onSuccess();
     }
     setIsLoading(false);
   };
@@ -109,19 +115,34 @@ const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn })
           <p className="text-red-500 text-xs mt-1">{form.formState.errors.password.message}</p>
         )}
       </div>
+      <div>
+        <Label htmlFor="confirmPassword" className="text-podcast-white text-sm font-medium">Confirmar Senha</Label>
+        <div className="relative mt-2">
+          <Input
+            id="confirmPassword"
+            type={showConfirmPassword ? 'text' : 'password'}
+            placeholder="Repita a senha"
+            className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 h-11 pr-10 w-full"
+            {...form.register('confirmPassword')}
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-podcast-gray hover:text-podcast-white hover:bg-transparent"
+            onClick={() => setShowConfirmPassword(prev => !prev)}
+          >
+            {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+          </Button>
+        </div>
+        {form.formState.errors.confirmPassword && (
+          <p className="text-red-500 text-xs mt-1">{form.formState.errors.confirmPassword.message}</p>
+        )}
+      </div>
       <Button type="submit" className="w-full bg-podcast-green text-podcast-black hover:bg-podcast-green/90 h-11 text-base font-semibold" disabled={isLoading}>
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Criar conta
       </Button>
-      <div className="text-center mt-4">
-        <button
-          type="button"
-          onClick={onSwitchToSignIn}
-          className="text-sm font-medium text-podcast-green hover:text-green-400 transition-colors duration-200"
-        >
-          Já tem uma conta? Entre
-        </button>
-      </div>
     </form>
   );
 };
