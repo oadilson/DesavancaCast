@@ -65,7 +65,7 @@ const Login: React.FC = () => {
 
         {/* Copyright no rodapé */}
         <div className="text-xs text-podcast-gray text-center">
-          © {currentYear} DesavançaCast
+          DesavançaCast © • {currentYear} • Todos os direitos reservados
         </div>
       </div>
 
