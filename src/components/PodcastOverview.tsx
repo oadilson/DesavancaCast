@@ -305,7 +305,7 @@ const PodcastOverview: React.FC = () => {
           </h2>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+        <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4", isMobile && "hidden")}> {/* Oculta filtros no mobile */}
           <div className="flex space-x-2 overflow-x-auto pb-2">
             <Button
               variant="ghost"
@@ -354,7 +354,7 @@ const PodcastOverview: React.FC = () => {
               Não ouvidos
             </Button>
           </div>
-          <div className="relative w-full sm:w-auto">
+          <div className={cn("relative w-full sm:w-auto", isMobile && "hidden")}> {/* Oculta busca no mobile */}
             <Input
               type="text"
               placeholder="Buscar episódios..."
