@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm } from '@hookform/resolvers/zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react'; // Importar Eye e EyeOff
 import { supabase } from '@/integrations/supabase/client';
 import { showError, showSuccess } from '@/utils/toast';
 
@@ -25,6 +25,7 @@ interface CustomSignUpFormProps {
 
 const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // Novo estado para visibilidade da senha
 
   const form = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -50,8 +51,6 @@ const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn })
     if (error) {
       showError(error.message);
     } else if (data.user) {
-      // O trigger 'handle_new_user' no Supabase já cuida da criação do perfil com o nome.
-      // Não precisamos fazer um upsert aqui.
       showSuccess('Cadastro realizado com sucesso! Verifique seu e-mail para confirmar.');
       onSwitchToSignIn(); // Redirecionar para o login após o cadastro
     }
@@ -59,14 +58,14 @@ const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn })
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5"> {/* Aumentado o espaçamento */}
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
       <div>
         <Label htmlFor="firstName" className="text-podcast-white text-sm font-medium">Nome</Label>
         <Input
           id="firstName"
           type="text"
           placeholder="Seu nome"
-          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11" // Altura e foco melhorados
+          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11"
           {...form.register('firstName')}
         />
         {form.formState.errors.firstName && (
@@ -79,22 +78,31 @@ const CustomSignUpForm: React.FC<CustomSignUpFormProps> = ({ onSwitchToSignIn })
           id="email"
           type="email"
           placeholder="seu@email.com"
-          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11" // Altura e foco melhorados
+          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11"
           {...form.register('email')}
         />
         {form.formState.errors.email && (
           <p className="text-red-500 text-xs mt-1">{form.formState.errors.email.message}</p>
         )}
       </div>
-      <div>
+      <div className="relative"> {/* Adicionado relative para posicionar o ícone */}
         <Label htmlFor="password" className="text-podcast-white text-sm font-medium">Senha</Label>
         <Input
           id="password"
-          type="password"
+          type={showPassword ? 'text' : 'password'} // Alternar tipo
           placeholder="Crie uma senha segura"
-          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11" // Altura e foco melhorados
+          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11 pr-10" // Adicionado pr-10 para o ícone
           {...form.register('password')}
         />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="absolute right-2 top-1/2 -translate-y-1/2 mt-2 text-podcast-gray hover:text-podcast-white" // Posicionamento do ícone
+          onClick={() => setShowPassword(prev => !prev)}
+        >
+          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+        </Button>
         {form.formState.errors.password && (
           <p className="text-red-500 text-xs mt-1">{form.formState.errors.password.message}</p>
         )}
