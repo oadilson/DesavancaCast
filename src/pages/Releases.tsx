@@ -2,14 +2,14 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { Calendar, Loader2, AlertTriangle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { getMyPodcast } from '@/data/podcastData';
+import { getPodcastForDisplay } from '@/data/podcastData'; // Usando a nova função
 import EpisodeList from '@/components/EpisodeList';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 const Releases: React.FC = () => {
   const { data: myPodcast, isLoading, isError, error } = useQuery({
-    queryKey: ['latestReleases'],
-    queryFn: getMyPodcast,
+    queryKey: ['latestReleasesDisplay'], // Chave de query alterada
+    queryFn: getPodcastForDisplay, // Usando a nova função
   });
 
   if (isLoading) {

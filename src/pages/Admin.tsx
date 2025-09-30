@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getMyPodcast } from '@/data/podcastData';
+import { syncAndGetPodcastForAdmin } from '@/data/podcastData'; // Usando a função de admin
 import { Episode } from '@/types/podcast';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,7 +36,7 @@ const Admin: React.FC = () => {
   const queryClient = useQueryClient();
   const { data: myPodcast, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['myPodcastAdmin'],
-    queryFn: getMyPodcast,
+    queryFn: syncAndGetPodcastForAdmin, // Usando a função de admin
   });
 
   const { data: analytics, isLoading: isLoadingAnalytics } = useQuery({
@@ -50,7 +50,6 @@ const Admin: React.FC = () => {
   const [isReverting, setIsReverting] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  // Show error toast if there's an error loading podcast data
   useEffect(() => {
     if (isError && error) {
       showError(`Erro ao carregar dados do podcast: ${error.message}`);
@@ -64,14 +63,14 @@ const Admin: React.FC = () => {
 
   const handleSaveChanges = () => {
     queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] });
-    queryClient.invalidateQueries({ queryKey: ['myPodcast'] });
-    refetch(); // Força o refetch para a query da página Admin
+    queryClient.invalidateQueries({ queryKey: ['myPodcastDisplay'] }); // Invalida a chave de exibição pública
+    refetch();
   };
 
   const handlePodcastDetailsSave = () => {
-    queryClient.invalidateQueries({ queryKey: ['myPodcast'] });
-    queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] }); // Invalida também a query do admin
-    refetch(); // Força o refetch para a query da página Admin
+    queryClient.invalidateQueries({ queryKey: ['myPodcastDisplay'] }); // Invalida a chave de exibição pública
+    queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] });
+    refetch();
   };
 
   const handleRevert = async (episodeId: string) => {
@@ -137,9 +136,7 @@ const Admin: React.FC = () => {
           </TabsList>
 
           <TabsContent value="episodes" className="space-y-6">
-            {/* Bento Grid Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Latest Episode Card */}
               {latestEpisode && (
                 <Card className="lg:col-span-2 bg-podcast-black-light border-podcast-border text-podcast-white flex flex-col md:flex-row overflow-hidden">
                   <img src={latestEpisode.cover_image || myPodcast.coverImage} alt={latestEpisode.title} className="w-full md:w-1/3 h-48 md:h-full object-cover" />
@@ -164,7 +161,6 @@ const Admin: React.FC = () => {
                   </div>
                 </Card>
               )}
-              {/* Stats Card */}
               <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
                 <CardHeader>
                   <CardTitle>Visão Geral</CardTitle>
@@ -186,7 +182,6 @@ const Admin: React.FC = () => {
               </Card>
             </div>
 
-            {/* All Episodes Table */}
             <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
               <CardHeader>
                 <CardTitle>Todos os Episódios</CardTitle>
@@ -196,7 +191,7 @@ const Admin: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <ScrollArea className="h-[400px] w-full">
-                  <div className="overflow-x-auto"> {/* Adicionado para rolagem horizontal em tabelas */}
+                  <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
                         <TableRow className="border-podcast-border hover:bg-transparent">
@@ -251,7 +246,6 @@ const Admin: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="analytics">
-            {/* Analytics content remains the same */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-3 space-y-6">
                 <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
@@ -304,7 +298,7 @@ const Admin: React.FC = () => {
                   </CardHeader>
                   <CardContent>
                     {analytics && (
-                      <div className="overflow-x-auto"> {/* Adicionado para rolagem horizontal em tabelas */}
+                      <div className="overflow-x-auto">
                         <Table>
                           <TableHeader>
                             <TableRow className="border-podcast-border hover:bg-transparent">

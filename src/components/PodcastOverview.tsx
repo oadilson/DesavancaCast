@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { getMyPodcast, getAudioTrails, getPopularEpisodes, getUnplayedEpisodes } from '@/data/podcastData';
+import { getPodcastForDisplay, getAudioTrails, getPopularEpisodes, getUnplayedEpisodes } from '@/data/podcastData';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause } from 'lucide-react'; // Importar Pause
+import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePodcastPlayer } from '@/context/PodcastPlayerContext';
 import { formatDuration } from '@/lib/utils';
@@ -24,8 +24,8 @@ type EpisodeFilter = 'recent' | 'popular' | 'oldest' | 'unplayed';
 const PodcastOverview: React.FC = () => {
   const queryClient = useQueryClient();
   const { data: myPodcast, isLoading, isError, error } = useQuery({
-    queryKey: ['myPodcast'],
-    queryFn: getMyPodcast,
+    queryKey: ['myPodcastDisplay'], // Chave de query alterada para a exibição pública
+    queryFn: getPodcastForDisplay, // Usando a nova função para exibição
   });
 
   const { data: audioTrails, isLoading: isLoadingTrails } = useQuery({
@@ -33,7 +33,7 @@ const PodcastOverview: React.FC = () => {
     queryFn: getAudioTrails,
   });
 
-  const { playEpisode, currentEpisode, isPlaying } = usePodcastPlayer(); // Obter currentEpisode e isPlaying
+  const { playEpisode, currentEpisode, isPlaying } = usePodcastPlayer();
   const { likedEpisodeIds, toggleLike, userId } = useLikedEpisodes();
   const { isPodcastLiked, toggleLikePodcast } = useLikedPodcast(myPodcast?.id);
   const navigate = useNavigate();
@@ -138,7 +138,8 @@ const PodcastOverview: React.FC = () => {
   const isFilterLoading = (isLoadingPopular && activeFilter === 'popular') || (isLoadingUnplayed && activeFilter === 'unplayed');
 
   const handlePodcastDetailsSave = () => {
-    queryClient.invalidateQueries({ queryKey: ['myPodcast'] });
+    queryClient.invalidateQueries({ queryKey: ['myPodcastDisplay'] }); // Invalida a chave de exibição pública
+    queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] }); // Invalida a chave de admin também
   };
 
   if (isLoading) {
@@ -165,11 +166,11 @@ const PodcastOverview: React.FC = () => {
     return (
       <div className="flex flex-col justify-center items-center h-64 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
         <Rss className="h-12 w-12 mb-4 text-podcast-green" />
-        <p className="text-lg font-bold mb-2">Podcast Ainda Não Sincronizado</p>
+        <p className="text-lg font-bold mb-2">Nenhum Podcast Disponível</p>
         <p className="text-sm text-podcast-gray text-center">
-          Para começar, por favor, faça login como administrador e visite esta página.
+          Parece que não há um podcast configurado para exibição.
           <br />
-          O feed RSS será sincronizado automaticamente.
+          Se você é o administrador, faça login e sincronize o feed RSS na página de administração.
         </p>
       </div>
     );
@@ -339,7 +340,7 @@ const PodcastOverview: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {displayEpisodes.map((episode) => {
               const isLiked = likedEpisodeIds.has(episode.id);
-              const isCurrentEpisodePlaying = isPlaying && currentEpisode?.id === episode.id; // Verificar se este episódio está tocando
+              const isCurrentEpisodePlaying = isPlaying && currentEpisode?.id === episode.id;
               return (
                 <Card
                   key={episode.id}
@@ -359,7 +360,7 @@ const PodcastOverview: React.FC = () => {
                           playEpisode(episode);
                         }}
                       >
-                        {isCurrentEpisodePlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />} {/* Renderização condicional */}
+                        {isCurrentEpisodePlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-1" />}
                       </Button>
                       {userId && (
                         <Heart
