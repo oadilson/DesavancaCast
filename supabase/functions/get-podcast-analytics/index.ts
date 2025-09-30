@@ -42,6 +42,7 @@ serve(async (req) => {
         uniqueListeners: 0,
         averagePlayTime: "0 min",
         topEpisodes: [],
+        playsByCountry: [], // Adicionado: playsByCountry vazio
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
@@ -82,11 +83,27 @@ serve(async (req) => {
       plays: item.count,
     }));
 
+    // Plays by Country (NOVO)
+    const { data: playsByCountryData, error: playsByCountryError } = await supabase
+      .from('plays')
+      .select('country, count')
+      .in('episode_id', episodeIds)
+      .not('country', 'is', null)
+      .not('country', 'eq', 'UNKNOWN')
+      .group('country')
+      .order('count', { ascending: false })
+      .returns<{ country: string, count: number }[]>();
+
+    if (playsByCountryError) throw playsByCountryError;
+
+    const playsByCountry = playsByCountryData || [];
+
     return new Response(JSON.stringify({
       totalPlays: totalPlays || 0,
       uniqueListeners: uniqueListeners,
       averagePlayTime: "Em breve", // Placeholder for now
       topEpisodes: topEpisodes,
+      playsByCountry: playsByCountry, // Adicionado: playsByCountry
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,

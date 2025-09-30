@@ -373,6 +373,7 @@ export interface PodcastAnalytics {
   uniqueListeners: number;
   averagePlayTime: string;
   topEpisodes: { rank: number; title: string; plays: number }[];
+  playsByCountry: { country: string; count: number }[]; // NOVO: Dados de reprodução por país
 }
 
 export async function getPodcastAnalytics(podcastId: string): Promise<PodcastAnalytics> {
@@ -382,6 +383,7 @@ export async function getPodcastAnalytics(podcastId: string): Promise<PodcastAna
       uniqueListeners: 0,
       averagePlayTime: "0 min",
       topEpisodes: [],
+      playsByCountry: [],
     };
   }
 

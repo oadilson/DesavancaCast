@@ -5,7 +5,7 @@ import { Episode } from '@/types/podcast';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Edit, RotateCcw, BarChart2, PlayCircle, Info, Users, Clock, ListMusic, Rss, CheckCircle, Edit2 } from 'lucide-react';
+import { Loader2, Edit, RotateCcw, BarChart2, PlayCircle, Info, Users, Clock, ListMusic, Rss, CheckCircle, Edit2, Globe } from 'lucide-react';
 import EditEpisodeModal from '@/components/EditEpisodeModal';
 import { supabase } from '@/integrations/supabase/client';
 import { showSuccess, showError } from '@/utils/toast';
@@ -15,6 +15,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ManageAudioTrails from '@/components/ManageAudioTrails';
 import { Badge } from '@/components/ui/badge';
+import CountryPlaysMap from '@/components/CountryPlaysMap'; // Importar o novo componente de mapa
 
 const Admin: React.FC = () => {
   const queryClient = useQueryClient();
@@ -269,6 +270,29 @@ const Admin: React.FC = () => {
                     )}
                   </CardContent>
                 </Card>
+
+                {/* NOVO: Mapa de Reproduções por País */}
+                <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2"><Globe className="h-5 w-5 text-podcast-green" /> Reproduções por País</CardTitle>
+                    <CardDescription>Visualize de onde vêm seus ouvintes.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {isLoadingAnalytics ? (
+                      <div className="flex justify-center items-center h-40">
+                        <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
+                      </div>
+                    ) : analytics && analytics.playsByCountry.length > 0 ? (
+                      <CountryPlaysMap playsByCountry={analytics.playsByCountry} />
+                    ) : (
+                      <div className="text-center text-podcast-gray py-4">
+                        <p>Nenhum dado de reprodução por país disponível ainda.</p>
+                        <p className="text-sm mt-1">Comece a ouvir episódios para ver o tráfego aqui!</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
                 <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2"><BarChart2 className="h-5 w-5 text-podcast-green" /> Top Episódios</CardTitle>
