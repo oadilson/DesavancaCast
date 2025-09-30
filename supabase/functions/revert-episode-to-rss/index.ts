@@ -64,6 +64,7 @@ serve(async (req) => {
         audio_url: originalItem.enclosure?.url,
         cover_image: originalItem.itunes?.image || feed.itunes?.image,
         is_edited: false, // Reverter o flag
+        is_premium: false, // Reverter o status premium
         newsletter_subtitle: null, // Limpar o subtítulo
       })
       .eq('id', episode_id);

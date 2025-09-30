@@ -90,7 +90,10 @@ const Admin: React.FC = () => {
     setUpdatingPremium(episodeId);
     const { error } = await supabase
       .from('episodes')
-      .update({ is_premium: isPremium })
+      .update({ 
+        is_premium: isPremium,
+        is_edited: true // Marcar como editado para proteger da sincronização
+      })
       .eq('id', episodeId);
     
     if (error) {
