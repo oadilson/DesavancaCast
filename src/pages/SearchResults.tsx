@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } => 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { searchEpisodes } from '@/data/podcastData';

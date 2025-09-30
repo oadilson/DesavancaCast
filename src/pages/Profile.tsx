@@ -162,7 +162,7 @@ const Profile: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              </TabsContent>
+              </div>
             </TabsContent>
             <TabsContent value="activity" className="p-4 sm:p-6">
               <div className="space-y-6">
