@@ -65,6 +65,13 @@ const Admin: React.FC = () => {
   const handleSaveChanges = () => {
     queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] });
     queryClient.invalidateQueries({ queryKey: ['myPodcast'] });
+    refetch(); // Força o refetch para a query da página Admin
+  };
+
+  const handlePodcastDetailsSave = () => {
+    queryClient.invalidateQueries({ queryKey: ['myPodcast'] });
+    queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] }); // Invalida também a query do admin
+    refetch(); // Força o refetch para a query da página Admin
   };
 
   const handleRevert = async (episodeId: string) => {
