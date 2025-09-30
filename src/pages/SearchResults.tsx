@@ -2,20 +2,18 @@ import React, { useEffect } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { searchEpisodes } from '@/data/podcastData';
-import { Loader2, Search, AlertTriangle, PlayCircle, Newspaper, Play } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
-import { usePodcastPlayer } from '@/context/PodcastPlayerContext';
-import { generateSlug, formatDuration } from '@/lib/utils';
-import { Episode } from '@/types/podcast';
+import { Loader2, Search, AlertTriangle } from 'lucide-react'; // Removed PlayCircle, Newspaper, Play
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Layout from '@/components/Layout';
-import { Button } from '@/components/ui/button';
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
+import EpisodeList from '@/components/EpisodeList'; // Import EpisodeList
+import EpisodeListItem from '@/components/EpisodeListItem'; // Import EpisodeListItem
 
 const SearchResults: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchTerm = searchParams.get('query') || '';
-  const { playEpisode } = usePodcastPlayer();
   const navigate = useNavigate();
+  const isMobile = useIsMobile(); // Use the hook
 
   const { data: episodes, isLoading, isError, error } = useQuery({
     queryKey: ['searchResults', searchTerm],
@@ -23,21 +21,16 @@ const SearchResults: React.FC = () => {
     enabled: !!searchTerm,
   });
 
-  const handleReadNewsletterClick = (episode: Episode, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/episode/${episode.id}`);
-  };
-
   useEffect(() => {
     if (!searchTerm) {
-      // navigate('/');
+      // navigate('/'); // Keep this commented out as per previous instructions
     }
   }, [searchTerm]);
 
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className=""> {/* Removido max-w-screen-xl mx-auto */}
+        <div className="">
           <h1 className="text-3xl font-bold text-podcast-white mb-6 flex items-center">
             <Search className="mr-3 h-7 w-7 text-podcast-green" />
             Resultados da Busca para "{searchTerm}"
@@ -70,35 +63,15 @@ const SearchResults: React.FC = () => {
           )}
 
           {!isLoading && !isError && episodes && episodes.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {episodes.map((episode) => (
-                <Card
-                  key={episode.id}
-                  className="bg-podcast-black-light border border-podcast-border text-podcast-white hover:bg-podcast-border transition-colors group p-4 cursor-pointer rounded-xl"
-                  onClick={() => {
-                    navigate(`/episode/${episode.id}`);
-                  }}
-                >
-                  <CardContent className="p-0">
-                    <div className="relative mb-3">
-                      <img src={episode.coverImage || '/placeholder.svg'} alt={episode.title} className="w-full rounded-lg object-cover aspect-square" />
-                      <Button
-                        size="icon"
-                        className="absolute bottom-2 right-2 rounded-full bg-podcast-green text-podcast-black h-12 w-12 opacity-0 group-hover:opacity-100 transition-all transform group-hover:translate-y-0 translate-y-2 hover:bg-podcast-green/90 shadow-lg"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          playEpisode(episode);
-                        }}
-                      >
-                        <Play className="h-6 w-6 ml-1" />
-                      </Button>
-                    </div>
-                    <CardTitle className="text-md font-semibold truncate">{episode.title}</CardTitle>
-                    <CardDescription className="text-sm text-podcast-gray mt-1">{new Date(episode.releaseDate || '').toLocaleDateString('pt-BR')} • {formatDuration(episode.duration)}</CardDescription>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            isMobile ? (
+              <div className="grid grid-cols-1 gap-4">
+                {episodes.map((episode) => (
+                  <EpisodeListItem key={episode.id} episode={episode} isMobile={isMobile} />
+                ))}
+              </div>
+            ) : (
+              <EpisodeList episodes={episodes} />
+            )
           )}
         </div>
       </ScrollArea>

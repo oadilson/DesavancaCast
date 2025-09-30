@@ -2,15 +2,19 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { Calendar, Loader2, AlertTriangle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { getPodcastForDisplay } from '@/data/podcastData'; // Usando a nova função
+import { getPodcastForDisplay } from '@/data/podcastData';
 import EpisodeList from '@/components/EpisodeList';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
+import EpisodeListItem from '@/components/EpisodeListItem'; // Import EpisodeListItem
 
 const Releases: React.FC = () => {
   const { data: myPodcast, isLoading, isError, error } = useQuery({
-    queryKey: ['latestReleasesDisplay'], // Chave de query alterada
-    queryFn: getPodcastForDisplay, // Usando a nova função
+    queryKey: ['latestReleasesDisplay'],
+    queryFn: getPodcastForDisplay,
   });
+
+  const isMobile = useIsMobile(); // Use the hook
 
   if (isLoading) {
     return (
@@ -41,13 +45,21 @@ const Releases: React.FC = () => {
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className=""> {/* Removido max-w-screen-xl mx-auto */}
+        <div className="">
           <h1 className="text-3xl font-bold text-podcast-white mb-6 flex items-center">
             <Calendar className="mr-3 h-7 w-7 text-podcast-green" />
             Últimos Lançamentos
           </h1>
           {latestEpisodes.length > 0 ? (
-            <EpisodeList episodes={latestEpisodes} podcastCoverImage={myPodcast?.coverImage} />
+            isMobile ? (
+              <div className="grid grid-cols-1 gap-4">
+                {latestEpisodes.map((episode) => (
+                  <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast?.coverImage} isMobile={isMobile} />
+                ))}
+              </div>
+            ) : (
+              <EpisodeList episodes={latestEpisodes} podcastCoverImage={myPodcast?.coverImage} />
+            )
           ) : (
             <div className="flex flex-col items-center justify-center h-64 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
               <Calendar className="h-12 w-12 mb-4 text-podcast-gray" />

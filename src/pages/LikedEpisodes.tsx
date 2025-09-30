@@ -5,16 +5,20 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchEpisodesByIds } from '@/data/podcastData';
 import EpisodeList from '@/components/EpisodeList';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useLikedEpisodes } from '@/hooks/use-liked-episodes'; // Importar o hook
+import { useLikedEpisodes } from '@/hooks/use-liked-episodes';
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
+import EpisodeListItem from '@/components/EpisodeListItem'; // Import EpisodeListItem
 
 const LikedEpisodes: React.FC = () => {
   const { likedEpisodeIds, isLoadingLiked, userId } = useLikedEpisodes();
 
   const { data: likedEpisodes = [], isLoading: isLoadingEpisodes, isError, error } = useQuery({
-    queryKey: ['likedEpisodes', userId, Array.from(likedEpisodeIds)], // Depende do userId e dos IDs curtidos
+    queryKey: ['likedEpisodes', userId, Array.from(likedEpisodeIds)],
     queryFn: () => fetchEpisodesByIds(Array.from(likedEpisodeIds)),
-    enabled: !!userId && !isLoadingLiked, // Só busca se o userId estiver disponível e os IDs curtidos já tiverem sido carregados
+    enabled: !!userId && !isLoadingLiked,
   });
+
+  const isMobile = useIsMobile(); // Use the hook
 
   if (isLoadingLiked || isLoadingEpisodes) {
     return (
@@ -43,13 +47,21 @@ const LikedEpisodes: React.FC = () => {
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className=""> {/* Removido max-w-screen-xl mx-auto */}
+        <div className="">
           <h1 className="text-3xl font-bold text-podcast-white mb-6 flex items-center">
             <Heart className="mr-3 h-7 w-7 text-podcast-green" />
             Episódios Curtidos
           </h1>
           {likedEpisodes.length > 0 ? (
-            <EpisodeList episodes={likedEpisodes} />
+            isMobile ? (
+              <div className="grid grid-cols-1 gap-4">
+                {likedEpisodes.map((episode) => (
+                  <EpisodeListItem key={episode.id} episode={episode} isMobile={isMobile} />
+                ))}
+              </div>
+            ) : (
+              <EpisodeList episodes={likedEpisodes} />
+            )
           ) : (
             <div className="flex flex-col items-center justify-center h-64 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
               <Heart className="h-12 w-12 mb-4 text-podcast-gray" />

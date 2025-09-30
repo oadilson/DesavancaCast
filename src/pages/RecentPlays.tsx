@@ -6,6 +6,8 @@ import { fetchRecentPlays } from '@/data/podcastData';
 import EpisodeList from '@/components/EpisodeList';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/integrations/supabase/client';
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
+import EpisodeListItem from '@/components/EpisodeListItem'; // Import EpisodeListItem
 
 const RecentPlays: React.FC = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -27,8 +29,10 @@ const RecentPlays: React.FC = () => {
   const { data: recentPlays = [], isLoading, isError, error } = useQuery({
     queryKey: ['recentPlays', userId],
     queryFn: () => fetchRecentPlays(userId!),
-    enabled: !!userId, // Só executa a query se o userId estiver disponível
+    enabled: !!userId,
   });
+
+  const isMobile = useIsMobile(); // Use the hook
 
   if (isLoading) {
     return (
@@ -57,13 +61,21 @@ const RecentPlays: React.FC = () => {
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className=""> {/* Removido max-w-screen-xl mx-auto */}
+        <div className="">
           <h1 className="text-3xl font-bold text-podcast-white mb-6 flex items-center">
             <History className="mr-3 h-7 w-7 text-podcast-green" />
             Reproduzidos Recentemente
           </h1>
           {recentPlays.length > 0 ? (
-            <EpisodeList episodes={recentPlays} />
+            isMobile ? (
+              <div className="grid grid-cols-1 gap-4">
+                {recentPlays.map((episode) => (
+                  <EpisodeListItem key={episode.id} episode={episode} isMobile={isMobile} />
+                ))}
+              </div>
+            ) : (
+              <EpisodeList episodes={recentPlays} />
+            )
           ) : (
             <div className="flex flex-col items-center justify-center h-64 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
               <History className="h-12 w-12 mb-4 text-podcast-gray" />

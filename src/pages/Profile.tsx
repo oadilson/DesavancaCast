@@ -11,11 +11,14 @@ import Layout from '@/components/Layout';
 import EditProfileModal from '@/components/EditProfileModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useQuery } from '@tanstack/react-query';
-import { getPodcastByUserId, fetchRecentPlays } from '@/data/podcastData'; // Importar fetchRecentPlays
+import { getPodcastByUserId, fetchRecentPlays } from '@/data/podcastData';
 import { useLikedEpisodes } from '@/hooks/use-liked-episodes';
 import { useDownloadContext } from '@/context/DownloadContext';
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
+import { cn } from '@/lib/utils'; // Import cn
+import EpisodeListItem from '@/components/EpisodeListItem'; // Import EpisodeListItem
 
-const ADMIN_EMAIL = 'adilsonsilva@outlook.com'; // Definir o email do administrador
+const ADMIN_EMAIL = 'adilsonsilva@outlook.com';
 
 interface ProfileData {
   first_name: string | null;
@@ -29,13 +32,11 @@ const Profile: React.FC = () => {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false); // Novo estado para admin
-
-  // A query userPodcast não é mais necessária aqui, pois a aba foi removida.
-  // Mantendo a importação de getPodcastByUserId por enquanto, caso seja usada em outro lugar.
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const { likedEpisodeIds, isLoading: isLoadingLiked } = useLikedEpisodes();
   const { downloadedEpisodes, isLoading: isLoadingDownloads } = useDownloadContext();
+  const isMobile = useIsMobile(); // Use the hook
 
   const { data: recentPlays = [], isLoading: isLoadingRecentPlays } = useQuery({
     queryKey: ['profileRecentPlays', user?.id],
@@ -48,17 +49,17 @@ const Profile: React.FC = () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       setUser(user);
-      setIsAdmin(user.email === ADMIN_EMAIL); // Define o status de admin
-      const { data: profileDataArray, error } = await supabase // Alterado aqui
+      setIsAdmin(user.email === ADMIN_EMAIL);
+      const { data: profileDataArray, error } = await supabase
         .from('profiles')
         .select('first_name, last_name, avatar_url')
-        .eq('id', user.id); // Removido .single()
+        .eq('id', user.id);
 
-      if (error) { // Removido error.code !== 'PGRST116'
+      if (error) {
         console.error('Error fetching profile:', error);
         showError('Não foi possível carregar os dados do perfil.');
       } else {
-        setProfile(profileDataArray?.[0] || null); // Pegar o primeiro item do array
+        setProfile(profileDataArray?.[0] || null);
       }
     } else {
       navigate('/login');
@@ -82,8 +83,6 @@ const Profile: React.FC = () => {
 
   const handleProfileSave = () => {
     fetchUserData();
-    // Invalidate podcast query as well in case of changes, though unlikely
-    // queryClient.invalidateQueries(['userPodcast', user?.id]);
   };
 
   if (loading || isLoadingLiked || isLoadingDownloads || isLoadingRecentPlays) {
@@ -97,7 +96,7 @@ const Profile: React.FC = () => {
   }
 
   if (!user) {
-    return null; // Should be redirected by useEffect
+    return null;
   }
 
   const fullName = profile?.first_name || profile?.last_name ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() : 'Nome não definido';
@@ -106,7 +105,7 @@ const Profile: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto"> {/* Removido container e px classes */}
+      <div className="max-w-4xl mx-auto">
         <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl">
           <CardHeader className="flex flex-col items-center space-y-4 p-6 md:flex-row md:space-y-0 md:space-x-6">
             <Avatar className="w-28 h-28 border-4 border-podcast-purple">
@@ -118,16 +117,16 @@ const Profile: React.FC = () => {
               <CardDescription className="text-podcast-gray mt-1">{user.email}</CardDescription>
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-2 mt-4 md:mt-0">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full sm:w-auto bg-transparent border-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full"
                 onClick={() => setIsEditModalOpen(true)}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Editar Perfil
               </Button>
-              <Button 
-                onClick={handleSignOut} 
+              <Button
+                onClick={handleSignOut}
                 variant="destructive"
                 className="w-full sm:w-auto bg-red-600/80 hover:bg-red-700 rounded-full"
               >
@@ -203,14 +202,9 @@ const Profile: React.FC = () => {
                       </div>
                     ) : recentPlays.length > 0 ? (
                       <div className="space-y-3">
-                        {recentPlays.slice(0, 3).map((episode) => ( // Limita a 3 episódios
-                          <div key={episode.id} className="flex items-center gap-3 p-2 bg-podcast-black rounded-md">
-                            <img src={episode.coverImage || '/placeholder.svg'} alt={episode.title} className="h-10 w-10 rounded-md object-cover" />
-                            <div className="flex-grow">
-                              <p className="text-sm font-medium truncate">{episode.title}</p>
-                              <p className="text-xs text-podcast-gray truncate">{episode.host || 'Podcast'}</p>
-                            </div>
-                          </div>
+                        {recentPlays.slice(0, 3).map((episode) => (
+                          // Usando EpisodeListItem para consistência
+                          <EpisodeListItem key={episode.id} episode={episode} isMobile={isMobile} />
                         ))}
                         {recentPlays.length > 3 && (
                           <div className="text-center mt-4">
@@ -232,7 +226,6 @@ const Profile: React.FC = () => {
                 </Card>
               </div>
             </TabsContent>
-            {/* A aba 'Meu Podcast' foi removida */}
           </Tabs>
         </Card>
       </div>

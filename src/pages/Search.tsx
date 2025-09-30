@@ -7,11 +7,14 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getPodcastForDisplay } from '@/data/podcastData';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import EpisodeListItem from '@/components/EpisodeListItem'; // Reutilizando este componente
+import EpisodeListItem from '@/components/EpisodeListItem';
+import EpisodeList from '@/components/EpisodeList'; // Import EpisodeList
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
 
 const Search: React.FC = () => {
   const navigate = useNavigate();
   const [localSearchTerm, setLocalSearchTerm] = useState('');
+  const isMobile = useIsMobile(); // Use the hook
 
   const { data: myPodcast, isLoading, isError, error } = useQuery({
     queryKey: ['allEpisodesForSearchPage'],
@@ -68,11 +71,15 @@ const Search: React.FC = () => {
           )}
 
           {!isLoading && !isError && allEpisodes.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4">
-              {allEpisodes.map((episode) => (
-                <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast?.coverImage} />
-              ))}
-            </div>
+            isMobile ? (
+              <div className="grid grid-cols-1 gap-4">
+                {allEpisodes.map((episode) => (
+                  <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast?.coverImage} isMobile={isMobile} />
+                ))}
+              </div>
+            ) : (
+              <EpisodeList episodes={allEpisodes} podcastCoverImage={myPodcast?.coverImage} />
+            )
           ) : (!isLoading && !isError && allEpisodes.length === 0) ? (
             <div className="flex flex-col items-center justify-center h-40 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
               <ListMusic className="h-12 w-12 mb-4 text-podcast-gray" />

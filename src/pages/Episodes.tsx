@@ -53,7 +53,7 @@ const Episodes: React.FC = () => {
             isMobile ? ( // Renderização condicional para mobile
               <div className="grid grid-cols-1 gap-4">
                 {allEpisodes.map((episode) => (
-                  <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast?.coverImage} />
+                  <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast?.coverImage} isMobile={isMobile} />
                 ))}
               </div>
             ) : ( // Renderização para desktop

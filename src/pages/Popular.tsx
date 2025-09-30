@@ -2,11 +2,11 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { TrendingUp, Loader2, AlertTriangle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { getPodcastForDisplay, getPopularEpisodes } from '@/data/podcastData'; // Importar getPopularEpisodes
+import { getPodcastForDisplay, getPopularEpisodes } from '@/data/podcastData';
 import EpisodeList from '@/components/EpisodeList';
 import { ScrollArea } from '@/components/ui/scroll-area';
-// import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'; // Remover import
-// import { Info } from 'lucide-react'; // Remover import
+import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
+import EpisodeListItem from '@/components/EpisodeListItem'; // Import EpisodeListItem
 
 const Popular: React.FC = () => {
   const { data: myPodcast, isLoading: isLoadingPodcast, isError: isErrorPodcast, error: errorPodcast } = useQuery({
@@ -17,8 +17,10 @@ const Popular: React.FC = () => {
   const { data: popularEpisodes = [], isLoading: isLoadingPopular, isError: isErrorPopular, error: errorPopular } = useQuery({
     queryKey: ['popularEpisodes', myPodcast?.id],
     queryFn: () => getPopularEpisodes(myPodcast!.id),
-    enabled: !!myPodcast?.id, // Só executa a query se o ID do podcast estiver disponível
+    enabled: !!myPodcast?.id,
   });
+
+  const isMobile = useIsMobile(); // Use the hook
 
   if (isLoadingPodcast || isLoadingPopular) {
     return (
@@ -48,14 +50,21 @@ const Popular: React.FC = () => {
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className=""> {/* Removido max-w-screen-xl mx-auto */}
+        <div className="">
           <h1 className="text-3xl font-bold text-podcast-white mb-6 flex items-center">
             <TrendingUp className="mr-3 h-7 w-7 text-podcast-green" />
             Mais Populares
           </h1>
-          {/* O alerta "Em Desenvolvimento" foi removido */}
           {popularEpisodes.length > 0 ? (
-            <EpisodeList episodes={popularEpisodes} podcastCoverImage={myPodcast?.coverImage} />
+            isMobile ? (
+              <div className="grid grid-cols-1 gap-4">
+                {popularEpisodes.map((episode) => (
+                  <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast?.coverImage} isMobile={isMobile} />
+                ))}
+              </div>
+            ) : (
+              <EpisodeList episodes={popularEpisodes} podcastCoverImage={myPodcast?.coverImage} />
+            )
           ) : (
             <div className="flex flex-col items-center justify-center h-64 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
               <TrendingUp className="h-12 w-12 mb-4 text-podcast-gray" />
