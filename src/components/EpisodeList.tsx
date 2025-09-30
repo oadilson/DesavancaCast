@@ -27,7 +27,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, podcastCoverImage }
         return (
           <Card
             key={episode.id}
-            className="bg-podcast-black-light border border-podcast-border text-podcast-white hover:bg-podcast-border transition-colors group p-4 rounded-xl cursor-pointer"
+            className="bg-transparent border-none text-podcast-white hover:bg-podcast-black-light transition-colors group p-3 rounded-lg cursor-pointer"
             onClick={() => {
               navigate(`/episode/${episode.id}`);
             }}
