@@ -13,8 +13,10 @@ serve(async (req) => {
 
   try {
     const { audioUrl } = await req.json();
+    console.log('proxy-audio: Received request for audioUrl:', audioUrl); // Log adicionado
 
     if (!audioUrl) {
+      console.error('proxy-audio: Missing audioUrl in request body.'); // Log adicionado
       return new Response(JSON.stringify({ error: 'Missing audioUrl' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
@@ -23,6 +25,7 @@ serve(async (req) => {
 
     // Fetch the audio file from the provided URL on the server-side
     const audioResponse = await fetch(audioUrl);
+    console.log(`proxy-audio: Fetch response status for ${audioUrl}: ${audioResponse.status}`); // Log adicionado
 
     if (!audioResponse.ok) {
       throw new Error(`Failed to fetch audio file: ${audioResponse.statusText}`);
@@ -36,6 +39,7 @@ serve(async (req) => {
     responseHeaders.set('Content-Type', audioResponse.headers.get('Content-Type') || 'audio/mpeg');
     responseHeaders.set('Content-Length', audioResponse.headers.get('Content-Length') || audioData.size.toString());
     
+    console.log('proxy-audio: Successfully proxied audio.'); // Log adicionado
     // Return the audio data directly to the client
     return new Response(audioData, {
       headers: responseHeaders,
@@ -43,7 +47,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in proxy-audio Edge Function:', error.message);
+    console.error('Error in proxy-audio Edge Function:', error.message); // Log adicionado
     return new Response(JSON.stringify({ error: error.message }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
