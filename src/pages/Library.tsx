@@ -81,15 +81,8 @@ const Library: React.FC = () => {
             Todos os Episódios
           </h2>
           {allEpisodes.length > 0 ? (
-            isMobile ? (
-              <div className="grid grid-cols-1 gap-4">
-                {allEpisodes.map((episode) => (
-                  <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast?.coverImage} isMobile={isMobile} />
-                ))}
-              </div>
-            ) : (
-              <EpisodeList episodes={allEpisodes} podcastCoverImage={myPodcast?.coverImage} />
-            )
+            // Agora sempre usa EpisodeList, que já é responsivo
+            <EpisodeList episodes={allEpisodes} podcastCoverImage={myPodcast?.coverImage} />
           ) : (
             <div className="flex flex-col items-center justify-center h-40 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
               <ListMusic className="h-12 w-12 mb-4 text-podcast-gray" />
