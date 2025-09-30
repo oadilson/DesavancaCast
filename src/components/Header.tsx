@@ -142,15 +142,15 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-podcast-border" />
-              <DropdownMenuItem asChild className="cursor-pointer hover:!bg-podcast-border">
+              <DropdownMenuItem asChild className="cursor-pointer hover:!bg-podcast-border hover:!text-podcast-white">
                 <Link to="/profile">Perfil</Link>
               </DropdownMenuItem>
               {isAdmin && (
-                <DropdownMenuItem asChild className="cursor-pointer hover:!bg-podcast-border">
+                <DropdownMenuItem asChild className="cursor-pointer hover:!bg-podcast-border hover:!text-podcast-white">
                   <Link to="/admin">Administração</Link>
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive hover:!bg-podcast-border hover:text-destructive-foreground">
+              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive hover:!bg-podcast-border hover:!text-destructive-foreground">
                 Sair
               </DropdownMenuItem>
             </DropdownMenuContent>
