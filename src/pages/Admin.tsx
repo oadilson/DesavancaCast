@@ -176,7 +176,7 @@ const Admin: React.FC = () => {
                             <TableCell className="text-podcast-gray">{new Date(episode.release_date || '').toLocaleDateString('pt-BR')}</TableCell>
                             <TableCell>
                               {episode.is_edited ? (
-                                <Badge variant="secondary" className="bg-podcast-green/20 text-podcast-green border-none">
+                                <Badge variant="secondary" className="bg-podcast-border text-podcast-green border-podcast-green/50 border">
                                   <Edit2 className="mr-1 h-3 w-3" /> Editado
                                 </Badge>
                               ) : (
