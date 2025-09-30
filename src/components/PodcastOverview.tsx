@@ -372,18 +372,15 @@ const PodcastOverview: React.FC = () => {
             <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
           </div>
         ) : displayEpisodes.length > 0 ? (
-          <div className={cn(
-            "grid gap-4",
-            isMobile ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5" // Grid para desktop, lista para mobile
-          )}>
-            {displayEpisodes.map((episode) => (
-              isMobile ? (
+          isMobile ? (
+            <div className="grid grid-cols-1 gap-4">
+              {displayEpisodes.map((episode) => (
                 <EpisodeListItem key={episode.id} episode={episode} podcastCoverImage={myPodcast.coverImage} />
-              ) : (
-                <EpisodeList key={episode.id} episodes={[episode]} podcastCoverImage={myPodcast.coverImage} /> // Reutiliza EpisodeList para um único item no desktop
-              )
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <EpisodeList episodes={displayEpisodes} podcastCoverImage={myPodcast.coverImage} />
+          )
         ) : (
           <div className="flex flex-col items-center justify-center h-40 text-podcast-white bg-podcast-black-light p-6 rounded-lg">
             <Search className="h-12 w-12 mb-4 text-podcast-gray" />

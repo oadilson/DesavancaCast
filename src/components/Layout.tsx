@@ -21,8 +21,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Header /> {/* Header movido para o topo, fora da estrutura flex principal */}
       <div className="flex flex-grow">
         <aside 
-          className="hidden md:block w-64 flex-shrink-0 fixed left-0 bottom-32 overflow-y-auto"
-          style={{ top: headerHeight }} // Ajusta o topo da sidebar para começar abaixo do header
+          className="hidden md:block w-64 flex-shrink-0 fixed left-0 overflow-y-auto"
+          style={{ top: headerHeight, bottom: '96px' }} // Ajusta o topo da sidebar para começar abaixo do header e o bottom para ficar acima do footer/player
         >
           <Sidebar />
         </aside>
