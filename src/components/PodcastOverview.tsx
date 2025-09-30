@@ -202,7 +202,7 @@ const PodcastOverview: React.FC = () => {
   return (
     <div className="space-y-8">
       <section
-        className="relative flex flex-col md:flex-row items-center md:items-end p-4 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light min-h-[200px] sm:min-h-[250px]" // Ajustado padding e min-height para mobile
+        className="relative flex flex-col md:flex-row items-center md:items-end px-2 py-4 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light min-h-[200px] sm:min-h-[250px]" // Ajustado padding e min-height para mobile
       >
         {/* Fundo desfocado removido para o estilo de card */}
         {/* <div
@@ -220,10 +220,10 @@ const PodcastOverview: React.FC = () => {
             alt={myPodcast.title}
             className="w-32 h-32 sm:w-48 sm:h-48 rounded-xl object-cover shadow-xl flex-shrink-0"
           />
-          <div className="text-center md:text-left flex-grow">
+          <div className="text-center md:text-left flex-grow min-w-0"> {/* Adicionado min-w-0 */}
             <p className="text-sm font-semibold text-podcast-white mb-1 uppercase">Podcast Exclusivo</p> {/* Título ajustado */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-podcast-white mb-2">{myPodcast.title}</h1> {/* Ajustado tamanho do título para mobile, sm e lg */}
-            <p className="text-md text-podcast-gray mb-4 max-w-prose">{myPodcast.description}</p>
+            <p className="text-md text-podcast-gray mb-4">{myPodcast.description}</p> {/* Removido max-w-prose */}
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2 text-sm text-podcast-gray mb-6">
               <span>{myPodcast.host}</span>
               <span>•</span>
