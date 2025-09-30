@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Podcast, Loader2 } from 'lucide-react';
-import { showSuccess, showError } from '@/utils/toast';
-import { Button } from '@/components/ui/button';
+import { Podcast } from 'lucide-react';
+import { showSuccess } from '@/utils/toast';
 import CustomSignInForm from '@/components/auth/CustomSignInForm';
 import CustomSignUpForm from '@/components/auth/CustomSignUpForm';
 
@@ -13,7 +12,6 @@ const Login: React.FC = () => {
   const [searchParams] = useSearchParams();
   const initialView = searchParams.get('view') === 'sign_up' ? 'sign_up' : 'sign_in';
   const [authView, setAuthView] = useState<'sign_in' | 'sign_up'>(initialView);
-  const [loadingAdminLogin, setLoadingAdminLogin] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
@@ -25,20 +23,6 @@ const Login: React.FC = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
-
-  const handleAdminLogin = async () => {
-    setLoadingAdminLogin(true);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: 'adilsonsilva@outlook.com',
-      password: 'admin',
-    });
-
-    if (error) {
-      showError('Falha no login de admin. Verifique se o usuário adilsonsilva@outlook.com foi criado com a senha "admin".');
-    }
-    // O sucesso é tratado pelo onAuthStateChange
-    setLoadingAdminLogin(false);
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-podcast-black to-podcast-black-light p-4 relative overflow-hidden">
@@ -59,20 +43,7 @@ const Login: React.FC = () => {
           </p>
         </CardHeader>
         <CardContent className="p-6 pt-2">
-          <Button onClick={handleAdminLogin} disabled={loadingAdminLogin} className="w-full mb-4 bg-podcast-purple hover:opacity-90">
-            {loadingAdminLogin ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Entrar como Administrador
-          </Button>
-          <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-podcast-border" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-podcast-black px-2 text-podcast-gray">
-                Ou
-              </span>
-            </div>
-          </div>
+          {/* O botão "Entrar como Administrador" e o separador "Ou" foram removidos */}
           {authView === 'sign_in' ? (
             <CustomSignInForm onSwitchToSignUp={() => setAuthView('sign_up')} />
           ) : (
