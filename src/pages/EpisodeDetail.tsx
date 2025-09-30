@@ -101,18 +101,20 @@ const EpisodeDetail: React.FC = () => {
 
           <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl p-6 mb-8">
             <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-6">
-              <img
-                src={episode.coverImage || '/placeholder.svg'}
-                alt={episode.title}
-                className="w-48 h-48 rounded-lg object-cover shadow-md flex-shrink-0"
-              />
-              <div className="text-center md:text-left flex-grow">
+              <div className="relative flex-shrink-0">
+                <img
+                  src={episode.coverImage || '/placeholder.svg'}
+                  alt={episode.title}
+                  className="w-48 h-48 rounded-lg object-cover shadow-md"
+                />
                 {episode.is_premium && (
-                  <Badge className="mb-2 bg-podcast-purple text-white border-none">
+                  <Badge className="absolute bottom-2 left-2 bg-podcast-purple text-white border-none">
                     <Star className="h-4 w-4 mr-1.5" fill="currentColor" />
-                    Conteúdo Premium
+                    Premium
                   </Badge>
                 )}
+              </div>
+              <div className="text-center md:text-left flex-grow">
                 <CardTitle className="text-3xl font-bold mb-2">{episode.title}</CardTitle>
                 {episode.podcastTitle && (
                   <p className="text-lg text-podcast-gray mb-1">
