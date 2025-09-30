@@ -202,7 +202,7 @@ const PodcastOverview: React.FC = () => {
   return (
     <div className="space-y-8">
       <section
-        className="relative flex flex-col md:flex-row items-center md:items-end px-2 py-4 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light min-h-[200px] sm:min-h-[250px]" // Ajustado padding e min-height para mobile
+        className="relative flex flex-col md:flex-row items-center md:items-end px-2 py-4 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light min-h-[200px] sm:min-h-[250px] hidden sm:block" // Adicionado 'hidden sm:block' aqui
       >
         {/* Fundo desfocado removido para o estilo de card */}
         {/* <div
@@ -332,16 +332,6 @@ const PodcastOverview: React.FC = () => {
               className={cn(
                 "rounded-full px-4 py-2 text-sm whitespace-nowrap",
                 activeFilter === 'oldest' ? "bg-podcast-green text-podcast-black hover:bg-podcast-green/90" : "bg-podcast-black-light text-podcast-gray hover:bg-podcast-border hover:text-podcast-white"
-              )}
-              onClick={() => setActiveFilter('oldest')}
-            >
-              Mais antigos
-            </Button>
-            <Button
-              variant="ghost"
-              className={cn(
-                "rounded-full px-4 py-2 text-sm whitespace-nowrap",
-                activeFilter === 'unplayed' ? "bg-podcast-green text-podcast-black hover:bg-podcast-green/90" : "bg-podcast-black-light text-podcast-gray hover:bg-podcast-border hover:text-podcast-white"
               )}
               onClick={() => {
                 if (!userId) {
