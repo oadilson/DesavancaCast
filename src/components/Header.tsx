@@ -32,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [globalSearchTerm, setGlobalSearchTerm] = useState(''); // Estado para a busca global
 
   useEffect(() => {
     const handleScroll = () => {
@@ -46,15 +47,15 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     window.addEventListener('scroll', handleScroll);
 
     const fetchProfile = async (user: User) => {
-      const { data: profileDataArray, error } = await supabase // Alterado aqui
+      const { data: profileDataArray, error } = await supabase
         .from('profiles')
         .select('first_name, last_name, avatar_url')
-        .eq('id', user.id); // Removido .single()
+        .eq('id', user.id);
 
-      if (error) { // Removido error.code !== 'PGRST116'
+      if (error) {
         console.error('Error fetching profile for header:', error);
       } else {
-        setProfile(profileDataArray?.[0] || null); // Pegar o primeiro item do array
+        setProfile(profileDataArray?.[0] || null);
       }
     };
 
@@ -86,6 +87,14 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
     await supabase.auth.signOut();
   };
 
+  const handleGlobalSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (globalSearchTerm.trim()) {
+      navigate(`/search?query=${encodeURIComponent(globalSearchTerm.trim())}`);
+      setGlobalSearchTerm(''); // Limpa o campo de busca após a navegação
+    }
+  };
+
   const isAdmin = session?.user?.email === ADMIN_EMAIL;
 
   return (
@@ -101,7 +110,22 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           <Podcast className="text-podcast-green" size={24} />
         </Link>
       </div>
-      <div className="flex items-center space-x-2 md:space-x-4 pr-2 md:pr-4"> {/* Adicionado pr-2 md:pr-4 aqui */}
+
+      {/* Global Search Bar */}
+      <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-md mx-4 hidden md:block">
+        <Input
+          type="text"
+          placeholder="O que você quer ouvir?"
+          className="w-full bg-podcast-black-light border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 pr-10 rounded-full h-10 text-sm"
+          value={globalSearchTerm}
+          onChange={(e) => setGlobalSearchTerm(e.target.value)}
+        />
+        <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2 text-podcast-gray hover:text-podcast-white">
+          <Search className="h-5 w-5" />
+        </Button>
+      </form>
+
+      <div className="flex items-center space-x-2 md:space-x-4 pr-2 md:pr-4">
         {session ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
