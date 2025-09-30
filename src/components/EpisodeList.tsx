@@ -20,7 +20,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, podcastCoverImage }
   const navigate = useNavigate();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       {episodes.map((episode) => {
         const isLiked = likedEpisodeIds.has(episode.id);
         const isCurrentEpisodePlaying = isPlaying && currentEpisode?.id === episode.id;

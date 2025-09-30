@@ -343,7 +343,7 @@ const PodcastOverview: React.FC = () => {
             <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
           </div>
         ) : displayEpisodes.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {displayEpisodes.map((episode) => {
               const isLiked = likedEpisodeIds.has(episode.id);
               const isCurrentEpisodePlaying = isPlaying && currentEpisode?.id === episode.id;
