@@ -20,6 +20,7 @@ import { Badge } from './ui/badge';
 import { useIsMobile } from '@/hooks/use-mobile'; // Importar o hook
 import EpisodeList from './EpisodeList'; // Componente de grid existente
 import EpisodeListItem from './EpisodeListItem'; // Novo componente de item de lista
+import LibraryCards from './LibraryCards'; // Importar o novo componente LibraryCards
 
 const ADMIN_EMAIL = 'adilsonsilva@outlook.com';
 
@@ -48,7 +49,7 @@ const PodcastOverview: React.FC = () => {
   const [isEditPodcastModalOpen, setIsEditPodcastModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
-
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null); // Adicionado para LibraryCards
 
   const { data: popularEpisodes, isLoading: isLoadingPopular } = useQuery({
     queryKey: ['popularEpisodes', myPodcast?.id],
@@ -63,8 +64,9 @@ const PodcastOverview: React.FC = () => {
   });
 
   useEffect(() => {
-    const checkAdminStatus = async () => {
+    const checkUserAndAdminStatus = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      setCurrentUserId(session?.user?.id || null); // Define o userId para LibraryCards
       if (session?.user?.email === ADMIN_EMAIL) {
         setIsAdmin(true);
       } else {
@@ -72,9 +74,10 @@ const PodcastOverview: React.FC = () => {
       }
     };
 
-    checkAdminStatus();
+    checkUserAndAdminStatus();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUserId(session?.user?.id || null); // Atualiza o userId para LibraryCards
       if (session?.user?.email === ADMIN_EMAIL) {
         setIsAdmin(true);
       } else {
@@ -201,6 +204,10 @@ const PodcastOverview: React.FC = () => {
 
   return (
     <div className="space-y-8">
+      {isMobile && ( // Renderiza os cards da biblioteca apenas no mobile
+        <LibraryCards userId={currentUserId} isAdmin={isAdmin} className="mb-8" />
+      )}
+
       <section
         className="relative flex flex-col md:flex-row items-center md:items-end px-2 py-4 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light min-h-[200px] sm:min-h-[250px] hidden sm:block" // Adicionado 'hidden sm:block' aqui
       >
