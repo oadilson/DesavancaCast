@@ -36,8 +36,6 @@ const MobileBottomNav: React.FC = () => {
   const libraryPath = userId ? '/library' : '/login';
   const profilePath = userId ? '/profile' : '/login';
 
-  const currentYear = new Date().getFullYear();
-
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-podcast-black-light border-t border-podcast-border text-podcast-gray flex flex-col">
       <nav className="flex justify-around items-center h-16">
@@ -67,9 +65,7 @@ const MobileBottomNav: React.FC = () => {
           </span>
         </Link>
       </nav>
-      <div className="text-xs text-podcast-gray text-center py-1 border-t border-podcast-border/50">
-        DesavançaCast © • {currentYear}
-      </div>
+      {/* O div de copyright foi removido daqui */}
     </div>
   );
 };
