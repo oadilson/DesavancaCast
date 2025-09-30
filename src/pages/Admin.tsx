@@ -12,11 +12,12 @@ import { showSuccess, showError } from '@/utils/toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs"; // Removido TabsList e TabsTrigger
 import ManageAudioTrails from '@/components/ManageAudioTrails';
 import { Badge } from '@/components/ui/badge';
 import CountryPlaysMap from '@/components/CountryPlaysMap';
 import { Switch } from '@/components/ui/switch';
+import { cn } from '@/lib/utils'; // Importar cn para classes condicionais
 
 const Admin: React.FC = () => {
   const queryClient = useQueryClient();
@@ -36,6 +37,7 @@ const Admin: React.FC = () => {
   const [isReverting, setIsReverting] = useState<string | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [updatingPremium, setUpdatingPremium] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<'episodes' | 'trails' | 'analytics'>('episodes'); // Novo estado para a seção ativa
 
   useEffect(() => {
     if (isError && error) {
@@ -136,29 +138,46 @@ const Admin: React.FC = () => {
           <p className="text-podcast-gray">Gerencie seu conteúdo e analise seu desempenho em um só lugar.</p>
         </div>
 
-        <Tabs defaultValue="episodes" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 bg-podcast-black-light border border-podcast-border rounded-lg p-1 mb-6">
-            <TabsTrigger 
-              value="episodes" 
-              className="text-podcast-gray hover:bg-podcast-border/50 rounded-md py-2 data-[state=active]:bg-podcast-black data-[state=active]:text-podcast-green data-[state=active]:shadow-sm"
-            >
-              <ListMusic className="mr-2 h-4 w-4" /> Gerenciar Episódios
-            </TabsTrigger>
-            <TabsTrigger 
-              value="trails" 
-              className="text-podcast-gray hover:bg-podcast-border/50 rounded-md py-2 data-[state=active]:bg-podcast-black data-[state=active]:text-podcast-green data-[state=active]:shadow-sm"
-            >
-              <Music4 className="mr-2 h-4 w-4" /> Gerenciar Trilhas de Áudio
-            </TabsTrigger>
-            <TabsTrigger 
-              value="analytics" 
-              className="text-podcast-gray hover:bg-podcast-border/50 rounded-md py-2 data-[state=active]:bg-podcast-black data-[state=active]:text-podcast-green data-[state=active]:shadow-sm"
-            >
-              <BarChart2 className="mr-2 h-4 w-4" /> Analytics
-            </TabsTrigger>
-          </TabsList>
+        {/* Botões de navegação personalizados */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          <Button
+            onClick={() => setActiveSection('episodes')}
+            className={cn(
+              "flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-colors",
+              activeSection === 'episodes'
+                ? "bg-podcast-green text-podcast-black hover:bg-podcast-green/90 shadow-md"
+                : "bg-podcast-black-light text-podcast-gray hover:bg-podcast-border hover:text-podcast-white border border-podcast-border"
+            )}
+          >
+            <ListMusic className="h-5 w-5" /> Gerenciar Episódios
+          </Button>
+          <Button
+            onClick={() => setActiveSection('trails')}
+            className={cn(
+              "flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-colors",
+              activeSection === 'trails'
+                ? "bg-podcast-green text-podcast-black hover:bg-podcast-green/90 shadow-md"
+                : "bg-podcast-black-light text-podcast-gray hover:bg-podcast-border hover:text-podcast-white border border-podcast-border"
+            )}
+          >
+            <Music4 className="h-5 w-5" /> Gerenciar Trilhas de Áudio
+          </Button>
+          <Button
+            onClick={() => setActiveSection('analytics')}
+            className={cn(
+              "flex items-center gap-2 px-6 py-3 rounded-xl text-base font-semibold transition-colors",
+              activeSection === 'analytics'
+                ? "bg-podcast-green text-podcast-black hover:bg-podcast-green/90 shadow-md"
+                : "bg-podcast-black-light text-podcast-gray hover:bg-podcast-border hover:text-podcast-white border border-podcast-border"
+            )}
+          >
+            <BarChart2 className="h-5 w-5" /> Analytics
+          </Button>
+        </div>
 
-          <TabsContent value="episodes" className="space-y-6">
+        {/* Conteúdo condicionalmente renderizado */}
+        {activeSection === 'episodes' && (
+          <div className="space-y-6">
             <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
@@ -286,104 +305,106 @@ const Admin: React.FC = () => {
                 </ScrollArea>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
+        )}
 
-          <TabsContent value="trails">
+        {activeSection === 'trails' && (
+          <div>
             <ManageAudioTrails />
-          </TabsContent>
+          </div>
+        )}
 
-          <TabsContent value="analytics">
-            <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-podcast-white mb-4">Visão Geral de Analytics</h2>
-              {isLoadingAnalytics ? (
-                <div className="flex justify-center items-center h-40">
-                  <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
-                  <span className="ml-2 text-podcast-white">Carregando analytics...</span>
+        {activeSection === 'analytics' && (
+          <div className="space-y-6">
+            <h2 className="text-2xl font-bold text-podcast-white mb-4">Visão Geral de Analytics</h2>
+            {isLoadingAnalytics ? (
+              <div className="flex justify-center items-center h-40">
+                <Loader2 className="h-8 w-8 animate-spin text-podcast-green" />
+                <span className="ml-2 text-podcast-white">Carregando analytics...</span>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total de Reproduções</CardTitle>
+                      <PlayCircle className="h-4 w-4 text-podcast-green" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{analytics?.totalPlays || 0}</div>
+                      <p className="text-xs text-podcast-gray">Total de vezes que um episódio foi reproduzido.</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Ouvintes Únicos</CardTitle>
+                      <Users className="h-4 w-4 text-podcast-green" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{analytics?.uniqueListeners || 0}</div>
+                      <p className="text-xs text-podcast-gray">Número de usuários distintos que reproduziram.</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Tempo Médio de Reprodução</CardTitle>
+                      <Clock className="h-4 w-4 text-podcast-green" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{analytics?.averagePlayTime || "Em breve"}</div>
+                      <p className="text-xs text-podcast-gray">Média de tempo que os usuários ouvem.</p>
+                    </CardContent>
+                  </Card>
                 </div>
-              ) : (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total de Reproduções</CardTitle>
-                        <PlayCircle className="h-4 w-4 text-podcast-green" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{analytics?.totalPlays || 0}</div>
-                        <p className="text-xs text-podcast-gray">Total de vezes que um episódio foi reproduzido.</p>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Ouvintes Únicos</CardTitle>
-                        <Users className="h-4 w-4 text-podcast-green" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{analytics?.uniqueListeners || 0}</div>
-                        <p className="text-xs text-podcast-gray">Número de usuários distintos que reproduziram.</p>
-                      </CardContent>
-                    </Card>
-                    <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
-                      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Tempo Médio de Reprodução</CardTitle>
-                        <Clock className="h-4 w-4 text-podcast-green" />
-                      </CardHeader>
-                      <CardContent>
-                        <div className="text-2xl font-bold">{analytics?.averagePlayTime || "Em breve"}</div>
-                        <p className="text-xs text-podcast-gray">Média de tempo que os usuários ouvem.</p>
-                      </CardContent>
-                    </Card>
-                  </div>
 
-                  <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
-                    <CardHeader>
-                      <CardTitle>Episódios Mais Populares</CardTitle>
-                      <CardDescription>Os episódios mais reproduzidos do seu podcast.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {analytics?.topEpisodes && analytics.topEpisodes.length > 0 ? (
-                        <Table>
-                          <TableHeader>
-                            <TableRow className="border-podcast-border hover:bg-transparent">
-                              <TableHead className="w-[50px]">Rank</TableHead>
-                              <TableHead>Título do Episódio</TableHead>
-                              <TableHead className="text-right">Reproduções</TableHead>
+                <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                  <CardHeader>
+                    <CardTitle>Episódios Mais Populares</CardTitle>
+                    <CardDescription>Os episódios mais reproduzidos do seu podcast.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {analytics?.topEpisodes && analytics.topEpisodes.length > 0 ? (
+                      <Table>
+                        <TableHeader>
+                          <TableRow className="border-podcast-border hover:bg-transparent">
+                            <TableHead className="w-[50px]">Rank</TableHead>
+                            <TableHead>Título do Episódio</TableHead>
+                            <TableHead className="text-right">Reproduções</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {analytics.topEpisodes.map((episode) => (
+                            <TableRow key={episode.rank} className="border-podcast-border hover:bg-podcast-border/50">
+                              <TableCell className="font-medium">{episode.rank}</TableCell>
+                              <TableCell>{episode.title}</TableCell>
+                              <TableCell className="text-right">{episode.plays}</TableCell>
                             </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {analytics.topEpisodes.map((episode) => (
-                              <TableRow key={episode.rank} className="border-podcast-border hover:bg-podcast-border/50">
-                                <TableCell className="font-medium">{episode.rank}</TableCell>
-                                <TableCell>{episode.title}</TableCell>
-                                <TableCell className="text-right">{episode.plays}</TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      ) : (
-                        <div className="text-center py-4 text-podcast-gray">Nenhum episódio popular ainda.</div>
-                      )}
-                    </CardContent>
-                  </Card>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    ) : (
+                      <div className="text-center py-4 text-podcast-gray">Nenhum episódio popular ainda.</div>
+                    )}
+                  </CardContent>
+                </Card>
 
-                  <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
-                    <CardHeader>
-                      <CardTitle>Reproduções por País</CardTitle>
-                      <CardDescription>Distribuição geográfica das reproduções do seu podcast.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {analytics?.playsByCountry && analytics.playsByCountry.length > 0 ? (
-                        <CountryPlaysMap playsByCountry={analytics.playsByCountry} />
-                      ) : (
-                        <div className="text-center py-4 text-podcast-gray">Nenhum dado de reprodução por país ainda.</div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
+                <Card className="bg-podcast-black-light border-podcast-border text-podcast-white">
+                  <CardHeader>
+                    <CardTitle>Reproduções por País</CardTitle>
+                    <CardDescription>Distribuição geográfica das reproduções do seu podcast.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {analytics?.playsByCountry && analytics.playsByCountry.length > 0 ? (
+                      <CountryPlaysMap playsByCountry={analytics.playsByCountry} />
+                    ) : (
+                      <div className="text-center py-4 text-podcast-gray">Nenhum dado de reprodução por país ainda.</div>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            )}
+          </div>
+        )}
       </div>
       <EditEpisodeModal
         episode={selectedEpisode}
