@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Library, Settings, Heart, Download, History } from 'lucide-react';
+import { Home, Search, Library, User } from 'lucide-react'; // Changed Settings to User
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { supabase } from '@/integrations/supabase/client';
-import { useLikedEpisodes } from '@/hooks/use-liked-episodes';
-import { useDownloadContext } from '@/context/DownloadContext';
 
 const MobileBottomNav: React.FC = () => {
   const isMobile = useIsMobile();
@@ -33,13 +31,11 @@ const MobileBottomNav: React.FC = () => {
   const navItems = [
     { path: '/', label: 'Início', icon: Home },
     { path: '/search', label: 'Buscar', icon: Search },
-    { path: '/profile', label: 'Configurações', icon: Settings },
   ];
 
-  // A 'Biblioteca' será um dropdown ou uma página que agrega Curtidos, Downloads, Histórico.
-  // Por enquanto, vamos direcionar para /liked como um placeholder para 'Biblioteca'.
-  // Em uma implementação mais completa, 'Biblioteca' poderia ser uma página com sub-navegação.
-  const libraryPath = userId ? '/liked' : '/login'; // Redireciona para login se não estiver logado
+  // 'Biblioteca' will link to /liked for now.
+  const libraryPath = userId ? '/liked' : '/login';
+  const profilePath = userId ? '/profile' : '/login'; // Profile also redirects to login if not authenticated
 
   const currentYear = new Date().getFullYear();
 
@@ -62,6 +58,13 @@ const MobileBottomNav: React.FC = () => {
           <Library className={cn("h-6 w-6 mb-1 transition-colors", location.pathname === '/liked' || location.pathname === '/downloads' || location.pathname === '/recent' ? "text-podcast-green" : "text-podcast-gray group-hover:text-podcast-white")} />
           <span className={cn("transition-colors", location.pathname === '/liked' || location.pathname === '/downloads' || location.pathname === '/recent' ? "text-podcast-green" : "text-podcast-gray group-hover:text-podcast-white")}>
             Biblioteca
+          </span>
+        </Link>
+        {/* Item do Perfil */}
+        <Link to={profilePath} className="flex flex-col items-center justify-center text-xs font-medium flex-1 h-full">
+          <User className={cn("h-6 w-6 mb-1 transition-colors", location.pathname === '/profile' ? "text-podcast-green" : "text-podcast-gray group-hover:text-podcast-white")} />
+          <span className={cn("transition-colors", location.pathname === '/profile' ? "text-podcast-green" : "text-podcast-gray group-hover:text-podcast-white")}>
+            Perfil
           </span>
         </Link>
       </nav>
