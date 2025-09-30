@@ -137,14 +137,23 @@ const Admin: React.FC = () => {
         </div>
 
         <Tabs defaultValue="episodes" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 bg-podcast-black-light border-podcast-border mb-6">
-            <TabsTrigger value="episodes">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 bg-podcast-black-light border border-podcast-border rounded-lg p-1 mb-6">
+            <TabsTrigger 
+              value="episodes" 
+              className="text-podcast-gray hover:bg-podcast-border/50 rounded-md py-2 data-[state=active]:bg-podcast-black data-[state=active]:text-podcast-green data-[state=active]:shadow-sm"
+            >
               <ListMusic className="mr-2 h-4 w-4" /> Gerenciar Episódios
             </TabsTrigger>
-            <TabsTrigger value="trails">
+            <TabsTrigger 
+              value="trails" 
+              className="text-podcast-gray hover:bg-podcast-border/50 rounded-md py-2 data-[state=active]:bg-podcast-black data-[state=active]:text-podcast-green data-[state=active]:shadow-sm"
+            >
               <Music4 className="mr-2 h-4 w-4" /> Gerenciar Trilhas de Áudio
             </TabsTrigger>
-            <TabsTrigger value="analytics">
+            <TabsTrigger 
+              value="analytics" 
+              className="text-podcast-gray hover:bg-podcast-border/50 rounded-md py-2 data-[state=active]:bg-podcast-black data-[state=active]:text-podcast-green data-[state=active]:shadow-sm"
+            >
               <BarChart2 className="mr-2 h-4 w-4" /> Analytics
             </TabsTrigger>
           </TabsList>
