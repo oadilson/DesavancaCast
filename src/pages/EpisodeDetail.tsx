@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getEpisodeById } from '@/data/podcastData';
 import Layout from '@/components/Layout';
-import { Loader2, AlertTriangle, PlayCircle, Heart, ArrowLeft, Newspaper, Download, Trash2, Star } from 'lucide-react';
+import { Loader2, AlertTriangle, PlayCircle, Heart, ArrowLeft, Newspaper, Download, Trash2, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -108,8 +108,8 @@ const EpisodeDetail: React.FC = () => {
                   className="w-48 h-48 rounded-lg object-cover shadow-md"
                 />
                 {episode.is_premium && (
-                  <Badge className="absolute bottom-2 left-2 bg-podcast-purple text-white border-none">
-                    <Star className="h-4 w-4 mr-1.5" fill="currentColor" />
+                  <Badge className="absolute bottom-2 left-2 bg-black/60 text-yellow-400 border-yellow-500/50 border backdrop-blur-sm">
+                    <Crown className="h-4 w-4 mr-1.5" />
                     Premium
                   </Badge>
                 )}

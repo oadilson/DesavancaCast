@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Star, Zap, Headphones } from 'lucide-react';
+import { Crown, Zap, Headphones } from 'lucide-react';
 import { showSuccess } from '@/utils/toast';
 
 const Premium: React.FC = () => {
@@ -15,8 +15,8 @@ const Premium: React.FC = () => {
       <div className="container mx-auto max-w-3xl py-10 px-6">
         <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl text-center">
           <CardHeader>
-            <div className="mx-auto bg-podcast-purple/20 rounded-full p-3 w-fit mb-4">
-              <Star className="h-8 w-8 text-podcast-purple" />
+            <div className="mx-auto bg-yellow-500/20 rounded-full p-3 w-fit mb-4">
+              <Crown className="h-8 w-8 text-yellow-400" />
             </div>
             <CardTitle className="text-4xl font-bold">DesavançaCast Premium</CardTitle>
             <CardDescription className="text-lg text-podcast-gray mt-2">

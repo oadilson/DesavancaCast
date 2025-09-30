@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { getPodcastForDisplay, getAudioTrails, getPopularEpisodes, getUnplayedEpisodes } from '@/data/podcastData';
 import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause, Star } from 'lucide-react';
+import { Play, PlayCircle, Loader2, AlertTriangle, Rss, Newspaper, Heart, Search, Share2, MoreHorizontal, Settings, Pause, Crown } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { usePodcastPlayer } from '@/context/PodcastPlayerContext';
 import { formatDuration } from '@/lib/utils';
@@ -354,8 +354,8 @@ const PodcastOverview: React.FC = () => {
                     <div className="relative mb-3 flex justify-center">
                       <img src={episode.coverImage || myPodcast.coverImage || '/placeholder.svg'} alt={episode.title} className="w-full rounded-lg object-cover aspect-square" />
                       {episode.is_premium && (
-                        <Badge className="absolute bottom-2 left-2 bg-podcast-purple text-white border-none text-xs">
-                          <Star className="h-3 w-3 mr-1" fill="currentColor" />
+                        <Badge className="absolute bottom-2 left-2 bg-black/60 text-yellow-400 border-yellow-500/50 border text-xs backdrop-blur-sm">
+                          <Crown className="h-3 w-3 mr-1.5" />
                           Premium
                         </Badge>
                       )}
