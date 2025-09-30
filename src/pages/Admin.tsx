@@ -160,7 +160,7 @@ const Admin: React.FC = () => {
                 : "bg-podcast-black-light text-podcast-gray hover:bg-podcast-border hover:text-podcast-white border border-podcast-border"
             )}
           >
-            <Music4 className="h-5 w-5" /> Gerenciar Trilhas de Áudio
+            <Music4 className="h-5 w-5" /> Gerenciar Trilhas
           </Button>
           <Button
             onClick={() => setActiveSection('analytics')}
