@@ -39,13 +39,13 @@ const EpisodeListItem: React.FC<EpisodeListItemProps> = ({ episode, podcastCover
             )}
           />
           {episode.is_premium && (
-            <Badge className="absolute -top-1 -right-1 bg-black/60 text-yellow-400 border-yellow-500/50 border text-xs backdrop-blur-sm px-1.5 py-0.5"> {/* Adjusted badge position/padding */}
+            <Badge className="absolute top-1 right-1 bg-black/60 text-yellow-400 border-yellow-500/50 border text-xs backdrop-blur-sm px-1.5 py-0.5"> {/* Adjusted badge position/padding */}
               <Crown className="h-2.5 w-2.5" /> {/* Adjusted badge icon size */}
             </Badge>
           )}
         </div>
         <div className={cn("min-w-0 flex-grow", isMobile && "flex flex-col")}> {/* Added flex-col for mobile text stacking */}
-          <h3 className="font-semibold text-podcast-white truncate">{episode.title}</h3>
+          <h3 className="font-semibold text-podcast-white line-clamp-2">{episode.title}</h3> {/* Removido 'truncate' e adicionado 'line-clamp-2' */}
           <div className="flex items-center text-sm text-podcast-gray mt-1">
             <Calendar className={cn("mr-1", isMobile ? "h-3 w-3" : "h-4 w-4")} />
             <span className={cn(isMobile && "text-xs")}>{new Date(episode.releaseDate).toLocaleDateString('pt-BR')}</span>
