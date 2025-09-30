@@ -100,20 +100,22 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 py-2 px-4 transition-all duration-300", // Removido flex items-center justify-between e md:px-8 daqui
+        "fixed top-0 left-0 right-0 z-50 py-2 px-4 transition-all duration-300 flex items-center justify-between",
         scrolled ? "bg-podcast-black/80 backdrop-blur-sm" : "bg-transparent",
         className
       )}
     >
-      <div className="flex items-center justify-between md:ml-64 md:px-8 md:py-2"> {/* Novo div interno para o conteúdo do cabeçalho */}
-        <div className="flex items-center space-x-2">
-          <MobileSidebar />
-          <Link to="/" className="hidden md:flex items-center gap-2 text-podcast-white hover:text-podcast-green transition-colors">
-            <Podcast className="text-podcast-green" size={24} />
-          </Link>
-        </div>
+      {/* Seção esquerda: Gatilho da Sidebar Mobile + Logo do Podcast (alinhado com a sidebar) */}
+      <div className="absolute left-0 top-0 bottom-0 flex items-center px-4 md:w-64">
+        <MobileSidebar />
+        <Link to="/" className="hidden md:flex items-center gap-2 text-podcast-white hover:text-podcast-green transition-colors ml-2">
+          <Podcast className="text-podcast-green" size={24} />
+        </Link>
+      </div>
 
-        {/* Global Search Bar */}
+      {/* Conteúdo principal do cabeçalho (barra de busca e menu do usuário) - deslocado para a direita */}
+      <div className="flex items-center justify-between flex-grow md:ml-64">
+        {/* Barra de Busca Global */}
         <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-lg hidden md:block mx-4">
           <Input
             type="text"
@@ -127,6 +129,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
           </Button>
         </form>
 
+        {/* Seção direita: Menu do Usuário */}
         <div className="flex items-center space-x-2 md:space-x-4">
           {session ? (
             <DropdownMenu>
