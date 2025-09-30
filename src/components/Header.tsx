@@ -158,7 +158,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
         ) : (
           <>
             <Link to="/login?view=sign_up">
-              <Button variant="ghost" className="text-podcast-white hover:text-podcast-green hidden sm:inline-flex">
+              <Button variant="ghost" className="text-podcast-white hover:text-podcast-green hover:bg-transparent hidden sm:inline-flex">
                 Registrar
               </Button>
             </Link>
