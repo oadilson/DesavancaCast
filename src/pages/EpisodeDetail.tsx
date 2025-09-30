@@ -16,6 +16,8 @@ import { formatDuration } from '@/lib/utils';
 import { useDownloadContext } from '@/context/DownloadContext';
 import { getDownloadedEpisode } from '@/lib/db';
 import { Badge } from '@/components/ui/badge';
+import { useSubscription } from '@/context/SubscriptionContext'; // Importar o hook de assinatura
+import PremiumContentOverlay from '@/components/PremiumContentOverlay'; // Importar o novo componente
 
 const EpisodeDetail: React.FC = () => {
   const { episodeId } = useParams<{ episodeId: string }>();
@@ -23,6 +25,7 @@ const EpisodeDetail: React.FC = () => {
   const { playEpisode } = usePodcastPlayer();
   const { likedEpisodeIds, toggleLike, userId } = useLikedEpisodes();
   const { downloadEpisode, deleteEpisode, downloadedEpisodeIds, downloadProgress } = useDownloadContext();
+  const { subscriptionStatus, isLoading: isLoadingSubscription } = useSubscription(); // Usar o hook de assinatura
 
   const { data: episode, isLoading, isError, error } = useQuery({
     queryKey: ['episodeDetail', episodeId],
@@ -30,7 +33,7 @@ const EpisodeDetail: React.FC = () => {
     enabled: !!episodeId,
   });
 
-  if (isLoading) {
+  if (isLoading || isLoadingSubscription) {
     return (
       <Layout>
         <div className="flex justify-center items-center h-full">
@@ -60,8 +63,15 @@ const EpisodeDetail: React.FC = () => {
   const isLiked = likedEpisodeIds.has(episode.id);
   const isDownloaded = downloadedEpisodeIds.has(episode.id);
   const isDownloading = downloadProgress[episode.id] !== undefined;
+  const hasPremiumSubscription = subscriptionStatus === 'premium';
 
   const handlePlayClick = async () => {
+    if (episode.is_premium && !hasPremiumSubscription) {
+      showError('Este é um episódio premium. Assine para ouvir!');
+      navigate('/premium');
+      return;
+    }
+
     if (isDownloaded) {
       const storedEpisode = await getDownloadedEpisode(episode.id);
       if (storedEpisode && storedEpisode.audioBlob) {
@@ -80,6 +90,11 @@ const EpisodeDetail: React.FC = () => {
   };
 
   const handleDownloadClick = () => {
+    if (episode.is_premium && !hasPremiumSubscription) {
+      showError('Este é um episódio premium. Assine para baixar!');
+      navigate('/premium');
+      return;
+    }
     if (isDownloaded) {
       deleteEpisode(episode.id);
     } else if (!isDownloading) {
@@ -181,11 +196,16 @@ const EpisodeDetail: React.FC = () => {
                   </CardDescription>
                 )}
               </CardHeader>
-              <article className="prose prose-invert prose-sm sm:prose-base max-w-none prose-headings:font-bold prose-headings:text-podcast-white prose-h1:text-3xl sm:prose-h1:text-4xl prose-h2:text-2xl sm:prose-h2:text-3xl prose-h3:text-xl sm:prose-h3:text-2xl prose-p:text-podcast-gray prose-a:text-podcast-green prose-a:no-underline hover:prose-a:underline prose-strong:text-podcast-white prose-blockquote:border-l-4 prose-blockquote:border-podcast-purple prose-blockquote:pl-4 prose-blockquote:italic prose-ul:list-disc prose-ul:pl-6 prose-li:marker:text-podcast-green prose-img:rounded-lg prose-hr:border-podcast-border">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                  {episode.newsletter_content}
-                </ReactMarkdown>
-              </article>
+              <PremiumContentOverlay
+                isPremiumEpisode={!!episode.is_premium}
+                hasPremiumSubscription={hasPremiumSubscription}
+              >
+                <article className="prose prose-invert prose-sm sm:prose-base max-w-none prose-headings:font-bold prose-headings:text-podcast-white prose-h1:text-3xl sm:prose-h1:text-4xl prose-h2:text-2xl sm:prose-h2:text-3xl prose-h3:text-xl sm:prose-h3:text-2xl prose-p:text-podcast-gray prose-a:text-podcast-green prose-a:no-underline hover:prose-a:underline prose-strong:text-podcast-white prose-blockquote:border-l-4 prose-blockquote:border-podcast-purple prose-blockquote:pl-4 prose-blockquote:italic prose-ul:list-disc prose-ul:pl-6 prose-li:marker:text-podcast-green prose-img:rounded-lg prose-hr:border-podcast-border">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {episode.newsletter_content}
+                  </ReactMarkdown>
+                </article>
+              </PremiumContentOverlay>
             </Card>
           ) : (
             <div className="text-center py-10 bg-podcast-black-light border-podcast-border text-podcast-white rounded-xl shadow-lg">
