@@ -10,8 +10,20 @@ export async function getMyPodcast(): Promise<Podcast | null> {
 
   if (error) {
     console.error('Erro ao invocar a função sync-and-get-podcast:', error);
-    // Lança o erro para que o React Query possa capturá-lo e exibir uma mensagem detalhada.
-    throw new Error(`Falha na comunicação com o servidor: ${error.message}`);
+    let errorMessage = `Falha na comunicação com o servidor: ${error.message}`;
+
+    // Tentar analisar a mensagem de erro detalhada do corpo da resposta da Edge Function
+    if (error.context?.body) {
+      try {
+        const errorBody = JSON.parse(error.context.body);
+        if (errorBody.error) {
+          errorMessage = errorBody.error;
+        }
+      } catch (parseError) {
+        console.warn('Não foi possível analisar o corpo do erro da Edge Function:', parseError);
+      }
+    }
+    throw new Error(errorMessage);
   }
 
   // Se a função retornar null (podcast ainda não sincronizado), apenas repasse o null.
