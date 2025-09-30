@@ -35,7 +35,7 @@ const EpisodeListItem: React.FC<EpisodeListItemProps> = ({ episode, podcastCover
             alt={episode.title}
             className={cn(
               "rounded-md object-cover",
-              isMobile ? "h-10 w-10" : "h-16 w-16" // Adjusted image size for mobile
+              isMobile ? "h-9 w-9" : "h-16 w-16" // Adjusted image size for mobile (h-9 w-9)
             )}
           />
           {episode.is_premium && (
@@ -45,7 +45,7 @@ const EpisodeListItem: React.FC<EpisodeListItemProps> = ({ episode, podcastCover
           )}
         </div>
         <div className={cn("min-w-0 flex-grow", isMobile && "flex flex-col")}> {/* Added flex-col for mobile text stacking */}
-          <h3 className="font-semibold text-podcast-white line-clamp-2">{episode.title}</h3> {/* Removido 'truncate' e adicionado 'line-clamp-2' */}
+          <h3 className="font-semibold text-podcast-white line-clamp-3">{episode.title}</h3> {/* Aumentado para line-clamp-3 */}
           <div className="flex items-center text-sm text-podcast-gray mt-1">
             <Calendar className={cn("mr-1", isMobile ? "h-3 w-3" : "h-4 w-4")} />
             <span className={cn(isMobile && "text-xs")}>{new Date(episode.releaseDate).toLocaleDateString('pt-BR')}</span>
