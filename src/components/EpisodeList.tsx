@@ -2,7 +2,7 @@ import React from 'react';
 import { Episode } from '@/types/podcast';
 import { Card, CardContent, CardDescription, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Heart, Pause, Crown } from 'lucide-react';
+import { Play, Heart, Pause, Crown, Calendar, Clock } from 'lucide-react'; // Importar Calendar e Clock
 import { usePodcastPlayer } from '@/context/PodcastPlayerContext';
 import { formatDuration } from '@/lib/utils';
 import { useLikedEpisodes } from '@/hooks/use-liked-episodes';
@@ -62,7 +62,13 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, podcastCoverImage }
                 )}
               </div>
               <CardTitle className="text-md font-semibold truncate">{episode.title}</CardTitle>
-              <CardDescription className="text-sm text-podcast-gray mt-1">{new Date(episode.releaseDate).toLocaleDateString('pt-BR')} • {formatDuration(episode.duration)}</CardDescription>
+              <CardDescription className="text-sm text-podcast-gray mt-1 flex items-center flex-wrap gap-x-2"> {/* Adicionado flex para os ícones */}
+                <Calendar className="h-4 w-4 text-podcast-gray" />
+                <span>{new Date(episode.releaseDate).toLocaleDateString('pt-BR')}</span>
+                <span className="mx-0">•</span> {/* Ajustado margin para mobile compactness */}
+                <Clock className="h-4 w-4 text-podcast-gray" />
+                <span>{formatDuration(episode.duration)}</span>
+              </CardDescription>
             </CardContent>
           </Card>
         );
