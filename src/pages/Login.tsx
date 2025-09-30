@@ -54,10 +54,8 @@ const Login: React.FC = () => {
       <div className="hidden md:flex md:w-1/2 bg-podcast-black-light relative p-8 flex-col justify-between text-podcast-white">
         {/* Logo/Título centralizado */}
         <div className="flex flex-col items-center justify-center flex-grow">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="bg-podcast-green p-2 rounded-md">
-              <Podcast className="text-podcast-black" size={36} />
-            </div>
+          <div className="flex items-center gap-4 mb-4">
+            <Podcast className="text-podcast-green" size={48} />
             <div>
               <h1 className="text-3xl font-bold">DesavançaCast</h1>
               <p className="text-base text-podcast-gray">Seu Podcast de Produtividade</p>
