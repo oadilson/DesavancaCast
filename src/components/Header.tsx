@@ -112,7 +112,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
       </div>
 
       {/* Global Search Bar */}
-      <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-md mx-4 hidden md:block">
+      <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-sm mx-auto hidden md:block"> {/* Alterado max-w-md para max-w-sm e mx-4 para mx-auto */}
         <Input
           type="text"
           placeholder="O que você quer ouvir?"
