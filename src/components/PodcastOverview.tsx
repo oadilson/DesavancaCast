@@ -17,10 +17,10 @@ import EditPodcastDetailsModal from './EditPodcastDetailsModal';
 import { supabase } from '@/integrations/supabase/client';
 import { showSuccess, showError } from '@/utils/toast';
 import { Badge } from './ui/badge';
-import { useIsMobile } from '@/hooks/use-mobile'; // Importar o hook
-import EpisodeList from './EpisodeList'; // Componente de grid existente
-import EpisodeListItem from './EpisodeListItem'; // Novo componente de item de lista
-import LibraryCards from './LibraryCards'; // Importar o novo componente LibraryCards
+import { useIsMobile } from '@/hooks/use-mobile';
+import EpisodeList from './EpisodeList';
+import EpisodeListItem from './EpisodeListItem';
+import LibraryCards from './LibraryCards';
 
 const ADMIN_EMAIL = 'adilsonsilva@outlook.com';
 
@@ -29,8 +29,8 @@ type EpisodeFilter = 'recent' | 'popular' | 'oldest' | 'unplayed';
 const PodcastOverview: React.FC = () => {
   const queryClient = useQueryClient();
   const { data: myPodcast, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ['myPodcastDisplay'], // Chave de query alterada para a exibição pública
-    queryFn: getPodcastForDisplay, // Usando a nova função para exibição
+    queryKey: ['myPodcastDisplay'],
+    queryFn: getPodcastForDisplay,
   });
 
   const { data: audioTrails, isLoading: isLoadingTrails } = useQuery({
@@ -42,14 +42,14 @@ const PodcastOverview: React.FC = () => {
   const { likedEpisodeIds, toggleLike, userId } = useLikedEpisodes();
   const { isPodcastLiked, toggleLikePodcast } = useLikedPodcast(myPodcast?.id);
   const navigate = useNavigate();
-  const isMobile = useIsMobile(); // Usar o hook
+  const isMobile = useIsMobile();
 
   const [activeFilter, setActiveFilter] = useState<EpisodeFilter>('recent');
   const [localSearchTerm, setLocalSearchTerm] = useState('');
   const [isEditPodcastModalOpen, setIsEditPodcastModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null); // Adicionado para LibraryCards
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   const { data: popularEpisodes, isLoading: isLoadingPopular } = useQuery({
     queryKey: ['popularEpisodes', myPodcast?.id],
@@ -66,7 +66,7 @@ const PodcastOverview: React.FC = () => {
   useEffect(() => {
     const checkUserAndAdminStatus = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      setCurrentUserId(session?.user?.id || null); // Define o userId para LibraryCards
+      setCurrentUserId(session?.user?.id || null);
       if (session?.user?.email === ADMIN_EMAIL) {
         setIsAdmin(true);
       } else {
@@ -77,7 +77,7 @@ const PodcastOverview: React.FC = () => {
     checkUserAndAdminStatus();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setCurrentUserId(session?.user?.id || null); // Atualiza o userId para LibraryCards
+      setCurrentUserId(session?.user?.id || null);
       if (session?.user?.email === ADMIN_EMAIL) {
         setIsAdmin(true);
       } else {
@@ -121,9 +121,9 @@ const PodcastOverview: React.FC = () => {
     setIsSyncing(true);
     showSuccess('Sincronização iniciada... Isso pode levar um momento.');
     try {
-      await refetch(); // Refetch the podcast data which triggers the Edge Function sync
+      await refetch();
       showSuccess('Podcast sincronizado com sucesso!');
-      queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] }); // Invalida a chave de admin também
+      queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] });
     } catch (err: any) {
       showError(`Falha na sincronização: ${err.message}`);
       console.error('Sync error:', err);
@@ -143,7 +143,7 @@ const PodcastOverview: React.FC = () => {
         episodes = [...myPodcast.episodes];
         if (activeFilter === 'oldest') {
             episodes.sort((a, b) => new Date(a.releaseDate).getTime() - new Date(b.releaseDate).getTime());
-        } else { // 'recent' ou fallback para 'unplayed' sem usuário
+        } else {
             episodes.sort((a, b) => new Date(b.releaseDate).getTime() - new Date(a.releaseDate).getTime());
         }
     }
@@ -164,8 +164,8 @@ const PodcastOverview: React.FC = () => {
   const isFilterLoading = (isLoadingPopular && activeFilter === 'popular') || (isLoadingUnplayed && activeFilter === 'unplayed');
 
   const handlePodcastDetailsSave = () => {
-    queryClient.invalidateQueries({ queryKey: ['myPodcastDisplay'] }); // Invalida a chave de exibição pública
-    queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] }); // Invalida a chave de admin também
+    queryClient.invalidateQueries({ queryKey: ['myPodcastDisplay'] });
+    queryClient.invalidateQueries({ queryKey: ['myPodcastAdmin'] });
   };
 
   if (isLoading) {
@@ -204,33 +204,23 @@ const PodcastOverview: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {isMobile && ( // Renderiza os cards da biblioteca apenas no mobile
-        <LibraryCards userId={currentUserId} isAdmin={isAdmin} className="mb-8 px-4" /> {/* Adicionado px-4 aqui */}
+      {isMobile && (
+        <LibraryCards userId={currentUserId} isAdmin={isAdmin} className="mb-8 px-4" />
       )}
 
       <section
-        className="relative flex flex-col md:flex-row items-center md:items-end px-2 py-4 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light min-h-[200px] sm:min-h-[250px] hidden sm:block" // Adicionado 'hidden sm:block' aqui
+        className="relative flex flex-col md:flex-row items-center md:items-end px-2 py-4 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light min-h-[200px] sm:min-h-[250px] hidden sm:block"
       >
-        {/* Fundo desfocado removido para o estilo de card */}
-        {/* <div
-          className="absolute inset-0 bg-cover bg-center blur-lg scale-110"
-          style={{
-            backgroundImage: `url(${myPodcast.coverImage || '/placeholder.svg'})`,
-          }}
-        ></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-podcast-black to-transparent opacity-90"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-podcast-black via-podcast-black/70 to-transparent opacity-90"></div> */}
-
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-end w-full space-y-6 md:space-y-0 md:space-x-8">
           <img
             src={myPodcast.coverImage}
             alt={myPodcast.title}
             className="w-32 h-32 sm:w-48 sm:h-48 rounded-xl object-cover shadow-xl flex-shrink-0"
           />
-          <div className="text-center md:text-left flex-grow min-w-0"> {/* Adicionado min-w-0 */}
-            <p className="text-sm font-semibold text-podcast-white mb-1 uppercase">Podcast Exclusivo</p> {/* Título ajustado */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-podcast-white mb-2">{myPodcast.title}</h1> {/* Ajustado tamanho do título para mobile, sm e lg */}
-            <p className="text-md text-podcast-gray mb-4">{myPodcast.description}</p> {/* Removido max-w-prose */}
+          <div className="text-center md:text-left flex-grow min-w-0">
+            <p className="text-sm font-semibold text-podcast-white mb-1 uppercase">Podcast Exclusivo</p>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-podcast-white mb-2">{myPodcast.title}</h1>
+            <p className="text-md text-podcast-gray mb-4">{myPodcast.description}</p>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2 text-sm text-podcast-gray mb-6">
               <span>{myPodcast.host}</span>
               <span>•</span>
@@ -252,7 +242,7 @@ const PodcastOverview: React.FC = () => {
                   Começar a Ouvir
                 </Button>
               )}
-              {isAdmin && ( // Botão Atualizar visível apenas para admin
+              {isAdmin && (
                 <Button
                   variant="outline"
                   className="bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base font-semibold"
@@ -312,7 +302,7 @@ const PodcastOverview: React.FC = () => {
           </h2>
         </div>
 
-        <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4", isMobile && "hidden")}> {/* Oculta filtros no mobile */}
+        <div className={cn("flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4", isMobile && "hidden")}>
           <div className="flex space-x-2 overflow-x-auto pb-2">
             <Button
               variant="ghost"
@@ -338,7 +328,7 @@ const PodcastOverview: React.FC = () => {
               variant="ghost"
               className={cn(
                 "rounded-full px-4 py-2 text-sm whitespace-nowrap",
-                activeFilter === 'oldest' ? "bg-podcast-green text-podcast-black hover:bg-podcast-green/90" : "bg-podcast-black-light text-podcast-gray hover:bg-podcast-border hover:text-podcast-white"
+                activeFilter === 'unplayed' ? "bg-podcast-green text-podcast-black hover:bg-podcast-green/90" : "bg-podcast-black-light text-podcast-gray hover:bg-podcast-border hover:text-podcast-white"
               )}
               onClick={() => {
                 if (!userId) {
@@ -351,7 +341,7 @@ const PodcastOverview: React.FC = () => {
               Não ouvidos
             </Button>
           </div>
-          <div className={cn("relative w-full sm:w-auto", isMobile && "hidden")}> {/* Oculta busca no mobile */}
+          <div className={cn("relative w-full sm:w-auto", isMobile && "hidden")}>
             <Input
               type="text"
               placeholder="Buscar episódios..."
