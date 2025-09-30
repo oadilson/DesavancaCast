@@ -205,87 +205,126 @@ const PodcastOverview: React.FC = () => {
   return (
     <div className="space-y-8">
       {isMobile && (
-        <LibraryCards userId={currentUserId} isAdmin={isAdmin} className="mb-8 px-4" />
+        <>
+          <LibraryCards userId={currentUserId} isAdmin={isAdmin} className="mb-8 px-4" />
+          {/* Novo Banner Mobile */}
+          <Card className="mx-4 mb-8 bg-gradient-to-br from-podcast-purple to-podcast-black-light border-none text-podcast-white shadow-lg rounded-xl p-6 text-center">
+            <CardContent className="p-0 flex flex-col items-center">
+              <img
+                src={myPodcast.coverImage}
+                alt={myPodcast.title}
+                className="w-24 h-24 rounded-lg object-cover shadow-md mb-4"
+              />
+              <p className="text-sm font-semibold text-podcast-white mb-1 uppercase">Podcast Exclusivo</p>
+              <CardTitle className="text-2xl font-bold mb-2">{myPodcast.title}</CardTitle>
+              <CardDescription className="text-sm text-podcast-gray mb-6">{myPodcast.description}</CardDescription>
+              <div className="flex flex-col gap-3 w-full max-w-xs">
+                {displayEpisodes[0] && (
+                  <Button
+                    className="w-full bg-podcast-green text-podcast-black hover:bg-podcast-green/90 rounded-full px-6 py-3 text-base font-semibold shadow-podcast-glow"
+                    onClick={() => playEpisode(displayEpisodes[0])}
+                  >
+                    <Play className="mr-2 h-4 w-4" />
+                    Começar a Ouvir
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Button
+                    variant="outline"
+                    className="w-full bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full px-6 py-3 text-base font-semibold"
+                    onClick={handleSync}
+                    disabled={isSyncing}
+                  >
+                    {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
+                    {isSyncing ? 'Atualizando...' : 'Atualizar'}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </>
       )}
 
-      <section
-        className="relative flex flex-col md:flex-row items-center md:items-end px-2 py-4 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light min-h-[200px] sm:min-h-[250px] hidden sm:block"
-      >
-        <div className="relative z-10 flex flex-col md:flex-row items-center md:items-end w-full space-y-6 md:space-y-0 md:space-x-8">
-          <img
-            src={myPodcast.coverImage}
-            alt={myPodcast.title}
-            className="w-32 h-32 sm:w-48 sm:h-48 rounded-xl object-cover shadow-xl flex-shrink-0"
-          />
-          <div className="text-center md:text-left flex-grow min-w-0">
-            <p className="text-sm font-semibold text-podcast-white mb-1 uppercase">Podcast Exclusivo</p>
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-podcast-white mb-2">{myPodcast.title}</h1>
-            <p className="text-md text-podcast-gray mb-4">{myPodcast.description}</p>
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2 text-sm text-podcast-gray mb-6">
-              <span>{myPodcast.host}</span>
-              <span>•</span>
-              <span>{myPodcast.episodes.length} episódio(s)</span>
-              {myPodcast.monthly_listeners && (
-                <>
-                  <span>•</span>
-                  <span>{myPodcast.monthly_listeners}</span>
-                </>
-              )}
-            </div>
-            <div className="flex items-center justify-center md:justify-start gap-4 mt-4">
-              {displayEpisodes[0] && (
-                <Button
-                  className="bg-podcast-green text-podcast-black hover:bg-podcast-green/90 rounded-full px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base font-semibold shadow-podcast-glow"
-                  onClick={() => playEpisode(displayEpisodes[0])}
-                >
-                  <Play className="mr-2 h-4 w-4" />
-                  Começar a Ouvir
+      {!isMobile && (
+        <section
+          className="relative flex flex-col md:flex-row items-center md:items-end px-2 py-4 md:p-8 rounded-xl shadow-lg overflow-hidden bg-gradient-to-br from-podcast-purple to-podcast-black-light min-h-[200px] sm:min-h-[250px]"
+        >
+          <div className="relative z-10 flex flex-col md:flex-row items-center md:items-end w-full space-y-6 md:space-y-0 md:space-x-8">
+            <img
+              src={myPodcast.coverImage}
+              alt={myPodcast.title}
+              className="w-32 h-32 sm:w-48 sm:h-48 rounded-xl object-cover shadow-xl flex-shrink-0"
+            />
+            <div className="text-center md:text-left flex-grow min-w-0">
+              <p className="text-sm font-semibold text-podcast-white mb-1 uppercase">Podcast Exclusivo</p>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-podcast-white mb-2">{myPodcast.title}</h1>
+              <p className="text-md text-podcast-gray mb-4">{myPodcast.description}</p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2 text-sm text-podcast-gray mb-6">
+                <span>{myPodcast.host}</span>
+                <span>•</span>
+                <span>{myPodcast.episodes.length} episódio(s)</span>
+                {myPodcast.monthly_listeners && (
+                  <>
+                    <span>•</span>
+                    <span>{myPodcast.monthly_listeners}</span>
+                  </>
+                )}
+              </div>
+              <div className="flex items-center justify-center md:justify-start gap-4 mt-4">
+                {displayEpisodes[0] && (
+                  <Button
+                    className="bg-podcast-green text-podcast-black hover:bg-podcast-green/90 rounded-full px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base font-semibold shadow-podcast-glow"
+                    onClick={() => playEpisode(displayEpisodes[0])}
+                  >
+                    <Play className="mr-2 h-4 w-4" />
+                    Começar a Ouvir
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Button
+                    variant="outline"
+                    className="bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base font-semibold"
+                    onClick={handleSync}
+                    disabled={isSyncing}
+                  >
+                    {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
+                    {isSyncing ? 'Atualizando...' : 'Atualizar'}
+                  </Button>
+                )}
+                {userId && (
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base font-semibold",
+                      isPodcastLiked && "bg-red-500 text-white border-red-500 hover:bg-red-600"
+                    )}
+                    onClick={toggleLikePodcast}
+                  >
+                    <Heart className={`mr-2 h-5 w-5 ${isPodcastLiked ? 'fill-white' : ''}`} />
+                    {isPodcastLiked ? 'Seguindo' : 'Seguir'}
+                  </Button>
+                )}
+                <Button variant="ghost" size="icon" className="text-podcast-gray hover:text-podcast-white hover:bg-podcast-border rounded-full" onClick={handleShare}>
+                  <Share2 className="h-5 w-5" />
                 </Button>
-              )}
-              {isAdmin && (
-                <Button
-                  variant="outline"
-                  className="bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base font-semibold"
-                  onClick={handleSync}
-                  disabled={isSyncing}
-                >
-                  {isSyncing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <RotateCcw className="mr-2 h-4 w-4" />}
-                  {isSyncing ? 'Atualizando...' : 'Atualizar'}
+                <Button variant="ghost" size="icon" className="text-podcast-gray hover:text-podcast-white hover:bg-podcast-border rounded-full">
+                  <MoreHorizontal className="h-5 w-5" />
                 </Button>
-              )}
-              {userId && (
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "bg-transparent border-podcast-gray text-podcast-gray hover:bg-podcast-border hover:text-podcast-white rounded-full px-4 py-2 text-sm sm:px-6 sm:py-3 sm:text-base font-semibold",
-                    isPodcastLiked && "bg-red-500 text-white border-red-500 hover:bg-red-600"
-                  )}
-                  onClick={toggleLikePodcast}
-                >
-                  <Heart className={`mr-2 h-5 w-5 ${isPodcastLiked ? 'fill-white' : ''}`} />
-                  {isPodcastLiked ? 'Seguindo' : 'Seguir'}
-                </Button>
-              )}
-              <Button variant="ghost" size="icon" className="text-podcast-gray hover:text-podcast-white hover:bg-podcast-border rounded-full" onClick={handleShare}>
-                <Share2 className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-podcast-gray hover:text-podcast-white hover:bg-podcast-border rounded-full">
-                <MoreHorizontal className="h-5 w-5" />
-              </Button>
-              {isAdmin && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-podcast-gray hover:text-podcast-white hover:bg-podcast-border rounded-full"
-                  onClick={() => setIsEditPodcastModalOpen(true)}
-                >
-                  <Settings className="h-5 w-5" />
-                </Button>
-              )}
+                {isAdmin && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-podcast-gray hover:text-podcast-white hover:bg-podcast-border rounded-full"
+                    onClick={() => setIsEditPodcastModalOpen(true)}
+                  >
+                    <Settings className="h-5 w-5" />
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {isLoadingTrails ? (
         <div className="flex justify-center items-center h-40">
