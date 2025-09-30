@@ -235,17 +235,17 @@ const PodcastOverview: React.FC = () => {
                   {isPodcastLiked ? 'Seguindo' : 'Seguir'}
                 </Button>
               )}
-              <Button variant="ghost" size="icon" className="text-podcast-gray hover:text-podcast-white rounded-full" onClick={handleShare}>
+              <Button variant="ghost" size="icon" className="text-podcast-gray hover:text-podcast-white hover:bg-podcast-border rounded-full" onClick={handleShare}>
                 <Share2 className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-podcast-gray hover:text-podcast-white rounded-full">
+              <Button variant="ghost" size="icon" className="text-podcast-gray hover:text-podcast-white hover:bg-podcast-border rounded-full">
                 <MoreHorizontal className="h-5 w-5" />
               </Button>
               {isAdmin && (
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-podcast-gray hover:text-podcast-white rounded-full"
+                  className="text-podcast-gray hover:text-podcast-white hover:bg-podcast-border rounded-full"
                   onClick={() => setIsEditPodcastModalOpen(true)}
                 >
                   <Settings className="h-5 w-5" />
