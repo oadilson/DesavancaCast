@@ -37,7 +37,7 @@ const EpisodeList: React.FC<EpisodeListProps> = ({ episodes, podcastCoverImage }
                 <img src={episode.coverImage || podcastCoverImage || '/placeholder.svg'} alt={episode.title} className="w-full rounded-lg object-cover aspect-square" />
                 {episode.is_premium && (
                   <Badge className="absolute top-2 left-2 bg-podcast-purple text-white border-none text-xs">
-                    <Star className="h-3 w-3 mr-1" />
+                    <Star className="h-3 w-3 mr-1" fill="currentColor" />
                     Premium
                   </Badge>
                 )}

@@ -109,7 +109,7 @@ const EpisodeDetail: React.FC = () => {
               <div className="text-center md:text-left flex-grow">
                 {episode.is_premium && (
                   <Badge className="mb-2 bg-podcast-purple text-white border-none">
-                    <Star className="h-4 w-4 mr-1.5" />
+                    <Star className="h-4 w-4 mr-1.5" fill="currentColor" />
                     Conteúdo Premium
                   </Badge>
                 )}
