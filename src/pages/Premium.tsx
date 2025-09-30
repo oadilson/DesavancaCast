@@ -42,7 +42,7 @@ const Premium: React.FC = () => {
             </div>
             <Button
               onClick={handleSubscribeClick}
-              className="w-full sm:w-auto bg-podcast-green text-podcast-black hover:bg-podcast-green/90 rounded-full px-8 py-6 text-lg font-semibold"
+              className="w-full sm:w-auto bg-podcast-green text-podcast-black hover:bg-podcast-green/90 rounded-full px-8 py-6 text-lg font-semibold transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-podcast-glow"
             >
               Assinar Agora
             </Button>
