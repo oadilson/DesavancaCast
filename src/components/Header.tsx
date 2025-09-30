@@ -100,9 +100,9 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   return (
     <header
       className={cn(
-        "fixed top-0 right-0 z-50 flex items-center justify-between py-2 px-4 transition-all duration-300", // Alterado px-3 para px-4
+        "fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-2 px-4 transition-all duration-300", // Adicionado left-0 e removido md:left-64
         scrolled ? "bg-podcast-black/80 backdrop-blur-sm" : "bg-transparent",
-        "md:left-64 md:py-4 md:px-8" // Alterado md:px-6 para md:px-8
+        "md:py-4 md:px-8"
       )}
     >
       <div className="flex items-center space-x-2">
