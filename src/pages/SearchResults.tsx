@@ -74,7 +74,7 @@ const SearchResults: React.FC = () => {
               {episodes.map((episode) => (
                 <Card
                   key={episode.id}
-                  className="bg-transparent border-none text-podcast-white hover:bg-podcast-black-light transition-colors group p-3 cursor-pointer rounded-lg"
+                  className="bg-podcast-black-light border border-podcast-border text-podcast-white hover:bg-podcast-border transition-colors group p-4 cursor-pointer rounded-xl"
                   onClick={() => {
                     navigate(`/episode/${episode.id}`);
                   }}
