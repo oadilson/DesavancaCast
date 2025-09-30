@@ -129,7 +129,8 @@ const PodcastOverview: React.FC = () => {
       return episodes.filter(
         (ep) =>
           ep.title.toLowerCase().includes(lowerCaseSearchTerm) ||
-          ep.description.toLowerCase().includes(lowerCaseSearchTerm)
+          ep.description.toLowerCase().includes(lowerCaseSearchTerm) ||
+          (ep.newsletter_content && ep.newsletter_content.toLowerCase().includes(lowerCaseSearchTerm))
       );
     }
 
