@@ -105,7 +105,7 @@ const EpisodeDetail: React.FC = () => {
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className="container mx-auto max-w-4xl py-6 sm:py-10 px-6 sm:px-8 lg:px-12">
+        <div className="max-w-4xl mx-auto"> {/* Removido container e px classes */}
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}

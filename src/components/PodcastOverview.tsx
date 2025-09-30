@@ -181,7 +181,7 @@ const PodcastOverview: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto max-w-screen-xl px-6 sm:px-8 lg:px-12 space-y-8">
+    <div className="max-w-screen-xl mx-auto space-y-8"> {/* Removido container e px classes */}
       {/* Removed: Global Search Bar from here */}
 
       <section

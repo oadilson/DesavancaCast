@@ -25,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           className="flex flex-col flex-grow min-w-0 md:ml-64"
           style={{ paddingTop: headerHeight }} // Adiciona padding-top para o conteúdo principal começar abaixo do header
         >
-          <main className="flex-grow p-4 md:p-8 overflow-y-auto pb-32"> {/* Ajustado padding para p-4 md:p-8 e removido pt-8 */}
+          <main className="flex-grow py-4 md:py-8 px-4 md:px-12 overflow-y-auto pb-32"> {/* Ajustado padding horizontal para px-4 md:px-12 */}
             {children}
           </main>
         </div>

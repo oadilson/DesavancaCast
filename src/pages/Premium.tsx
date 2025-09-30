@@ -12,7 +12,7 @@ const Premium: React.FC = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto max-w-3xl py-10 px-6">
+      <div className="max-w-3xl mx-auto py-10"> {/* Removido container e px classes */}
         <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl text-center">
           <CardHeader>
             <div className="mx-auto bg-yellow-500/20 rounded-full p-3 w-fit mb-4">

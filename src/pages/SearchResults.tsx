@@ -37,7 +37,7 @@ const SearchResults: React.FC = () => {
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className="container mx-auto max-w-screen-xl py-6 sm:py-10 px-6 sm:px-8 lg:px-12">
+        <div className="max-w-screen-xl mx-auto"> {/* Removido container e px classes */}
           <h1 className="text-3xl font-bold text-podcast-white mb-6 flex items-center">
             <Search className="mr-3 h-7 w-7 text-podcast-green" />
             Resultados da Busca para "{searchTerm}"

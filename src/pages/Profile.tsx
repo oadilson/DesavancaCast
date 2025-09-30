@@ -106,7 +106,7 @@ const Profile: React.FC = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto max-w-4xl py-6 sm:py-10 px-6 sm:px-8 lg:px-12">
+      <div className="max-w-4xl mx-auto"> {/* Removido container e px classes */}
         <Card className="bg-podcast-black-light border-podcast-border text-podcast-white shadow-lg rounded-xl">
           <CardHeader className="flex flex-col items-center space-y-4 p-6 md:flex-row md:space-y-0 md:space-x-6">
             <Avatar className="w-28 h-28 border-4 border-podcast-purple">
