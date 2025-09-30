@@ -67,8 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       <div className="mb-6">
         {!isLoadingPodcast && myPodcast && (
           <Link to="/" className="flex items-center gap-3 mb-6">
-            {/* Substituído a imagem pela Podcast icon */}
-            <Podcast className="h-10 w-10 text-podcast-green" /> 
+            <img src={myPodcast.coverImage || '/placeholder.svg'} alt={myPodcast.title} className="h-10 w-10 rounded-lg object-cover" />
             <span className="text-lg font-bold text-podcast-white">{myPodcast.title}</span>
           </Link>
         )}
