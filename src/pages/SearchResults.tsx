@@ -1,19 +1,19 @@
-import React, { useEffect } => 'react';
+import React, { useEffect } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { searchEpisodes } from '@/data/podcastData';
-import { Loader2, Search, AlertTriangle } from 'lucide-react'; // Removed PlayCircle, Newspaper, Play
+import { Loader2, Search, AlertTriangle } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Layout from '@/components/Layout';
-import { useIsMobile } from '@/hooks/use-mobile'; // Import useIsMobile
-import EpisodeList from '@/components/EpisodeList'; // Import EpisodeList
-import EpisodeListItem from '@/components/EpisodeListItem'; // Import EpisodeListItem
+import { useIsMobile } from '@/hooks/use-mobile';
+import EpisodeList from '@/components/EpisodeList';
+import EpisodeListItem from '@/components/EpisodeListItem';
 
 const SearchResults: React.FC = () => {
   const [searchParams] = useSearchParams();
   const searchTerm = searchParams.get('query') || '';
   const navigate = useNavigate();
-  const isMobile = useIsMobile(); // Use the hook
+  const isMobile = useIsMobile();
 
   const { data: episodes, isLoading, isError, error } = useQuery({
     queryKey: ['searchResults', searchTerm],
