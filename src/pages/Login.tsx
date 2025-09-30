@@ -25,8 +25,18 @@ const Login: React.FC = () => {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-podcast-black to-podcast-black-light p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('/placeholder.svg')] bg-cover bg-center opacity-20 blur-sm"></div>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      <div
+        className="absolute inset-0 opacity-20 blur-sm animate-background-pan"
+        style={{
+          background: `
+            radial-gradient(circle at 20% 80%, hsl(var(--podcast-green) / 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, hsl(var(--podcast-purple) / 0.1) 0%, transparent 50%),
+            linear-gradient(to bottom right, hsl(var(--podcast-black-light)), hsl(var(--podcast-black)))
+          `,
+          backgroundSize: '200% 200%', // Permite que o gradiente se mova
+        }}
+      ></div>
       <Card className="w-full max-w-sm sm:max-w-md bg-podcast-black/90 backdrop-blur-sm border border-podcast-border text-podcast-white shadow-2xl rounded-2xl overflow-hidden transition-all duration-300">
         <div className="bg-podcast-purple h-2 w-full"></div>
         <CardHeader className="text-center pt-6">
@@ -43,7 +53,6 @@ const Login: React.FC = () => {
           </p>
         </CardHeader>
         <CardContent className="p-6 pt-2">
-          {/* O botão "Entrar como Administrador" e o separador "Ou" foram removidos */}
           {authView === 'sign_in' ? (
             <CustomSignInForm onSwitchToSignUp={() => setAuthView('sign_up')} />
           ) : (
