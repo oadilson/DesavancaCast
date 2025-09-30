@@ -100,80 +100,82 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 flex items-center justify-between py-2 px-4 transition-all duration-300", // Adicionado left-0 e removido md:left-64
+        "fixed top-0 left-0 right-0 z-50 py-2 px-4 transition-all duration-300", // Removido flex items-center justify-between e md:px-8 daqui
         scrolled ? "bg-podcast-black/80 backdrop-blur-sm" : "bg-transparent",
-        "md:py-4 md:px-8"
+        className
       )}
     >
-      <div className="flex items-center space-x-2">
-        <MobileSidebar />
-        <Link to="/" className="hidden md:flex items-center gap-2 text-podcast-white hover:text-podcast-green transition-colors">
-          <Podcast className="text-podcast-green" size={24} />
-        </Link>
-      </div>
+      <div className="flex items-center justify-between md:ml-64 md:px-8 md:py-2"> {/* Novo div interno para o conteúdo do cabeçalho */}
+        <div className="flex items-center space-x-2">
+          <MobileSidebar />
+          <Link to="/" className="hidden md:flex items-center gap-2 text-podcast-white hover:text-podcast-green transition-colors">
+            <Podcast className="text-podcast-green" size={24} />
+          </Link>
+        </div>
 
-      {/* Global Search Bar */}
-      <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-lg mr-auto hidden md:block">
-        <Input
-          type="text"
-          placeholder="O que você quer ouvir?"
-          className="w-full bg-podcast-black-light border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 pr-10 rounded-full h-10 text-sm"
-          value={globalSearchTerm}
-          onChange={(e) => setGlobalSearchTerm(e.target.value)}
-        />
-        <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2 text-podcast-gray hover:text-podcast-white">
-          <Search className="h-5 w-5" />
-        </Button>
-      </form>
+        {/* Global Search Bar */}
+        <form onSubmit={handleGlobalSearch} className="relative flex-grow max-w-lg mr-auto hidden md:block">
+          <Input
+            type="text"
+            placeholder="O que você quer ouvir?"
+            className="w-full bg-podcast-black-light border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 pr-10 rounded-full h-10 text-sm"
+            value={globalSearchTerm}
+            onChange={(e) => setGlobalSearchTerm(e.target.value)}
+          />
+          <Button type="submit" variant="ghost" size="icon" className="absolute right-0 top-1/2 -translate-y-1/2 text-podcast-gray hover:text-podcast-white">
+            <Search className="h-5 w-5" />
+          </Button>
+        </form>
 
-      <div className="flex items-center space-x-2 md:space-x-4">
-        {session ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                <Avatar className="h-10 w-10">
-                   <AvatarImage src={profile?.avatar_url || `https://api.dicebear.com/8.x/initials/svg?seed=${session.user.email}`} alt="User Avatar" />
-                  <AvatarFallback>{session.user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-podcast-black-light border-podcast-border text-podcast-white" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">Minha Conta</p>
-                  <p className="text-xs leading-none text-podcast-gray">
-                    {session.user.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-podcast-border" />
-              <DropdownMenuItem asChild className="cursor-pointer hover:!bg-podcast-border hover:!text-podcast-white">
-                <Link to="/profile">Perfil</Link>
-              </DropdownMenuItem>
-              {isAdmin && (
+        <div className="flex items-center space-x-2 md:space-x-4">
+          {session ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Avatar className="h-10 w-10">
+                     <AvatarImage src={profile?.avatar_url || `https://api.dicebear.com/8.x/initials/svg?seed=${session.user.email}`} alt="User Avatar" />
+                    <AvatarFallback>{session.user.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 bg-podcast-black-light border-podcast-border text-podcast-white" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">Minha Conta</p>
+                    <p className="text-xs leading-none text-podcast-gray">
+                      {session.user.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-podcast-border" />
                 <DropdownMenuItem asChild className="cursor-pointer hover:!bg-podcast-border hover:!text-podcast-white">
-                  <Link to="/admin">Administração</Link>
+                  <Link to="/profile">Perfil</Link>
                 </DropdownMenuItem>
-              )}
-              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive hover:!bg-podcast-border hover:!text-destructive-foreground">
-                Sair
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <>
-            <Link to="/login?view=sign_up">
-              <Button variant="ghost" className="text-podcast-white hover:text-podcast-green hover:bg-transparent hidden sm:inline-flex">
-                Registrar
-              </Button>
-            </Link>
-            <Link to="/login">
-              <Button className="rounded-full bg-podcast-green text-podcast-black hover:bg-podcast-green/90 px-4 py-2 text-sm md:text-base">
-                Entrar
-              </Button>
-            </Link>
-          </>
-        )}
+                {isAdmin && (
+                  <DropdownMenuItem asChild className="cursor-pointer hover:!bg-podcast-border hover:!text-podcast-white">
+                    <Link to="/admin">Administração</Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive hover:!bg-podcast-border hover:!text-destructive-foreground">
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Link to="/login?view=sign_up">
+                <Button variant="ghost" className="text-podcast-white hover:text-podcast-green hover:bg-transparent hidden sm:inline-flex">
+                  Registrar
+                </Button>
+              </Link>
+              <Link to="/login">
+                <Button className="rounded-full bg-podcast-green text-podcast-black hover:bg-podcast-green/90 px-4 py-2 text-sm md:text-base">
+                  Entrar
+                </Button>
+              </Link>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
