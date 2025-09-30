@@ -19,7 +19,11 @@ const signInSchema = z.object({
 
 type SignInFormValues = z.infer<typeof signInSchema>;
 
-const CustomSignInForm: React.FC = () => {
+interface CustomSignInFormProps {
+  onSwitchToSignUp: () => void;
+}
+
+const CustomSignInForm: React.FC<CustomSignInFormProps> = ({ onSwitchToSignUp }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<SignInFormValues>({
@@ -102,10 +106,19 @@ const CustomSignInForm: React.FC = () => {
           </button>
         </div>
       </div>
-      <Button type="submit" className="w-full bg-podcast-green text-podcast-black hover:bg-podcast-green/90 h-11 text-base font-semibold" disabled={isLoading}>
+      <Button type="submit" className="w-full bg-podcast-green text-podcast-black hover:bg-podcast-green/80 h-11 text-base font-semibold" disabled={isLoading}>
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Entrar
       </Button>
+      <div className="text-center mt-4">
+        <button
+          type="button"
+          onClick={onSwitchToSignUp}
+          className="text-sm font-medium text-podcast-green hover:text-green-400 transition-colors duration-200"
+        >
+          Não tem uma conta? Cadastre-se
+        </button>
+      </div>
     </form>
   );
 };
