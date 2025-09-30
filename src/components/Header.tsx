@@ -150,7 +150,7 @@ const Header: React.FC<HeaderProps> = ({ className }) => {
                   <Link to="/admin">Administração</Link>
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer hover:!bg-podcast-border text-red-500">
+              <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer hover:!bg-podcast-border text-destructive">
                 Sair
               </DropdownMenuItem>
             </DropdownMenuContent>
