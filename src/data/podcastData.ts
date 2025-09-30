@@ -371,6 +371,66 @@ export async function getUnplayedEpisodes(podcastId: string, userId: string): Pr
   }));
 }
 
+export async function fetchRecentPlays(userId: string): Promise<Episode[]> {
+  if (!userId) return [];
+
+  const { data, error } = await supabase
+    .from('plays')
+    .select(`
+      episode_id,
+      played_at,
+      episodes (
+        id,
+        title,
+        description,
+        duration,
+        release_date,
+        audio_url,
+        cover_image,
+        is_edited,
+        newsletter_content,
+        newsletter_subtitle,
+        podcast_id,
+        guid,
+        is_premium,
+        podcasts(title, host, cover_image)
+      )
+    `)
+    .eq('user_id', userId)
+    .order('played_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching recent plays:', error);
+    throw new Error(error.message);
+  }
+
+  if (!data) {
+    return [];
+  }
+
+  const recentEpisodes: Episode[] = data
+    .filter(play => play.episodes !== null)
+    .map((play: any) => ({
+      id: play.episodes.id,
+      title: play.episodes.title,
+      description: play.episodes.description,
+      duration: play.episodes.duration,
+      releaseDate: play.episodes.release_date,
+      audioUrl: play.episodes.audio_url,
+      coverImage: play.episodes.cover_image || play.episodes.podcasts?.cover_image || '/placeholder.svg',
+      podcast_id: play.episodes.podcast_id,
+      guid: play.episodes.guid,
+      is_edited: play.episodes.is_edited,
+      newsletter_content: play.episodes.newsletter_content,
+      newsletter_subtitle: play.episodes.newsletter_subtitle,
+      is_premium: play.episodes.is_premium,
+      host: play.episodes.podcasts?.host,
+      podcastTitle: play.episodes.podcasts?.title,
+    }));
+
+  return recentEpisodes;
+}
+
 export interface PodcastAnalytics {
   totalPlays: number;
   uniqueListeners: number;
