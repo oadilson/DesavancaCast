@@ -79,7 +79,7 @@ const Login: React.FC = () => {
             <p className="text-podcast-gray mt-2">
               {authView === 'sign_in'
                 ? 'Bem-vindo de volta! Faça login para continuar.'
-                : 'Comece sua jornada na produtividade caótica hoje mesmo.'}
+                : 'Crie sua conta e comece a ouvir agora mesmo.'}
             </p>
           </CardHeader>
           <CardContent className="p-6 pt-2">
