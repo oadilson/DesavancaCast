@@ -132,7 +132,7 @@ const Admin: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-screen-xl mx-auto"> {/* Removido container e px classes */}
+      <div className=""> {/* Removido max-w-screen-xl mx-auto */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-podcast-white">Painel do Administrador</h1>
           <p className="text-podcast-gray">Gerencie seu conteúdo e analise seu desempenho em um só lugar.</p>

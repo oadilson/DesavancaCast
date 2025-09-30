@@ -43,7 +43,7 @@ const LikedEpisodes: React.FC = () => {
   return (
     <Layout>
       <ScrollArea className="h-full">
-        <div className="max-w-screen-xl mx-auto"> {/* Removido container e px classes */}
+        <div className=""> {/* Removido max-w-screen-xl mx-auto */}
           <h1 className="text-3xl font-bold text-podcast-white mb-6 flex items-center">
             <Heart className="mr-3 h-7 w-7 text-podcast-green" />
             Episódios Curtidos

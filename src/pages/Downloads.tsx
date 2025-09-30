@@ -41,7 +41,7 @@ const Downloads: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-screen-xl mx-auto py-6 sm:py-10"> {/* Removido container e px classes */}
+      <div className="py-6 sm:py-10"> {/* Removido max-w-screen-xl mx-auto */}
         <h1 className="text-3xl font-bold text-podcast-white mb-6 flex items-center">
           <Download className="mr-3 h-7 w-7 text-podcast-green" />
           Downloads
