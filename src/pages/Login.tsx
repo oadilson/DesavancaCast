@@ -85,10 +85,12 @@ const Login: React.FC = () => {
             </p>
           </CardHeader>
           <CardContent className="p-6 pt-2">
-            <Button 
-              className="w-full flex items-center justify-center gap-2 py-2 h-11 
+            <button 
+              type="button"
+              className="w-full inline-flex items-center justify-center gap-2 py-2 h-11 
                          bg-podcast-border text-podcast-white border border-podcast-border 
-                         hover:bg-podcast-border/70"
+                         hover:bg-podcast-border/70 rounded-md text-sm font-medium
+                         disabled:opacity-50 disabled:pointer-events-none transition-colors"
               onClick={handleGoogleSignIn}
               disabled={isSigningInWithGoogle}
             >
@@ -98,15 +100,18 @@ const Login: React.FC = () => {
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
               ) : (
-                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> {/* Adicionado fill="none" */}
-                  <path d="M12.24 10.284V11.99H18.48C18.364 12.684 18.012 13.608 17.316 14.304C16.62 15 15.696 15.648 14.64 16.224L14.64 16.236L16.068 17.388C17.808 15.708 18.96 13.476 19.2 10.284H12.24Z" fill="#4285F4"/>
-                  <path d="M12.24 7.716V7.704L12.24 7.716L5.184 7.716L5.16 7.728C5.184 7.032 5.304 6.36 5.544 5.736C5.784 5.112 6.12 4.536 6.552 4.008L6.564 4.008L7.992 2.856C7.416 3.42 6.936 4.056 6.552 4.764C6.168 5.472 5.892 6.24 5.724 7.068L5.724 7.08L5.184 7.716H12.24Z" fill="#34A853"/>
-                  <path d="M12.24 19.284V19.272L12.24 19.284L12.228 19.296L5.184 19.296L5.16 19.284C5.184 19.98 5.304 20.652 5.544 21.276C5.784 21.9 6.12 22.476 6.552 23.004L6.564 23.004L7.992 24.156C7.416 23.592 6.936 22.956 6.552 22.248C6.168 21.54 5.892 20.772 5.724 19.944L5.724 19.932L5.184 19.284H12.24Z" fill="#FBBC05"/>
-                  <path d="M12.24 13.716V13.704L12.24 13.716L12.228 13.728L19.284 13.728L19.296 13.716C19.272 13.02 19.152 12.348 18.912 11.724C18.672 11.1 18.336 10.524 17.904 9.996L17.892 9.996L16.464 8.844C16.992 9.396 17.412 10.02 17.724 10.728C18.036 11.436 18.24 12.204 18.312 13.032L18.312 13.044L19.284 13.716H12.24Z" fill="#EA4335"/>
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" className="h-5 w-5">
+                  <g>
+                  <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path>
+                  <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.42-4.55H24v8.51h13.01c-.59 3.41-2.36 6.32-5.21 8.25l7.44 5.79c4.4-4.04 6.97-10.02 6.97-17.99z"></path>
+                  <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path>
+                  <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.44-5.79c-2.15 1.45-4.92 2.3-8.45 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path>
+                  <path fill="none" d="M0 0h48v48H0z"></path>
+                  </g>
                 </svg>
               )}
               Continuar com Google
-            </Button>
+            </button>
             <div className="relative flex justify-center text-xs uppercase my-6">
               <span className="bg-podcast-black-light px-2 text-podcast-gray">ou</span>
               <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-podcast-border" />
