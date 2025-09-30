@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form'; // Corrigido: Importar useForm de react-hook-form
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { showError, showSuccess } from '@/utils/toast';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom'; // Removido, pois não é usado diretamente aqui
 
 const signInSchema = z.object({
   email: z.string().email({ message: 'E-mail inválido.' }),
@@ -71,12 +71,12 @@ const CustomSignInForm: React.FC<CustomSignInFormProps> = ({ onSwitchToSignUp })
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
       <div>
-        <Label htmlFor="email" className="text-podcast-white text-sm font-medium">E-mail</Label>
+        <Label htmlFor="email" className="text-gray-700 text-sm font-medium">E-mail</Label>
         <Input
           id="email"
           type="email"
           placeholder="seu@email.com"
-          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11"
+          className="bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-podcast-purple/30 mt-2 h-11"
           {...form.register('email')}
         />
         {form.formState.errors.email && (
@@ -84,12 +84,12 @@ const CustomSignInForm: React.FC<CustomSignInFormProps> = ({ onSwitchToSignUp })
         )}
       </div>
       <div>
-        <Label htmlFor="password" className="text-podcast-white text-sm font-medium">Senha</Label>
+        <Label htmlFor="password" className="text-gray-700 text-sm font-medium">Senha</Label>
         <Input
           id="password"
           type="password"
           placeholder="Sua senha"
-          className="bg-podcast-border border-none text-podcast-white placeholder:text-podcast-gray focus:ring-2 focus:ring-podcast-green/30 mt-2 h-11"
+          className="bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-podcast-purple/30 mt-2 h-11"
           {...form.register('password')}
         />
         {form.formState.errors.password && (
@@ -99,14 +99,14 @@ const CustomSignInForm: React.FC<CustomSignInFormProps> = ({ onSwitchToSignUp })
           <button
             type="button"
             onClick={handleForgotPassword}
-            className="text-xs text-podcast-gray hover:text-podcast-green transition-colors duration-200"
+            className="text-xs text-gray-500 hover:text-podcast-purple transition-colors duration-200"
             disabled={isLoading}
           >
             Esqueceu a senha?
           </button>
         </div>
       </div>
-      <Button type="submit" className="w-full bg-podcast-green text-podcast-black hover:bg-podcast-green/80 h-11 text-base font-semibold" disabled={isLoading}>
+      <Button type="submit" className="w-full bg-podcast-purple text-white hover:bg-podcast-purple/90 h-11 text-base font-semibold" disabled={isLoading}>
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Entrar
       </Button>
@@ -114,7 +114,7 @@ const CustomSignInForm: React.FC<CustomSignInFormProps> = ({ onSwitchToSignUp })
         <button
           type="button"
           onClick={onSwitchToSignUp}
-          className="text-sm font-medium text-podcast-green hover:text-green-400 transition-colors duration-200"
+          className="text-sm font-medium text-podcast-purple hover:text-podcast-purple/80 transition-colors duration-200"
         >
           Não tem uma conta? Cadastre-se
         </button>

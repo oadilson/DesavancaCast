@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -6,6 +8,7 @@ import { Podcast } from 'lucide-react';
 import { showSuccess } from '@/utils/toast';
 import CustomSignInForm from '@/components/auth/CustomSignInForm';
 import CustomSignUpForm from '@/components/auth/CustomSignUpForm';
+import { Button } from '@/components/ui/button'; // Para o botão Google placeholder
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -21,57 +24,71 @@ const Login: React.FC = () => {
       }
     });
 
-    // Obtém o valor computado da variável CSS --podcast-black
-    const rootStyle = getComputedStyle(document.documentElement);
-    const podcastBlackHSL = rootStyle.getPropertyValue('--podcast-black').trim();
-    
-    // Salva o background original do body e define o novo
-    const originalBodyBg = document.body.style.backgroundColor;
-    document.body.style.backgroundColor = `hsl(${podcastBlackHSL})`;
-
     return () => {
       subscription.unsubscribe();
-      // Restaura o background original do body ao sair da página de login
-      document.body.style.backgroundColor = originalBodyBg;
     };
   }, [navigate]);
 
+  const currentYear = new Date().getFullYear();
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-podcast-black">
-      <div
-        className="absolute inset-0 opacity-70 blur-xs animate-background-pan"
-        style={{
-          background: `
-            radial-gradient(circle at 20% 80%, hsl(var(--podcast-green) / 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, hsl(var(--podcast-purple) / 0.3) 0%, transparent 50%),
-            linear-gradient(to bottom right, hsl(var(--podcast-black-light)), hsl(var(--podcast-black)))
-          `,
-          backgroundSize: '200% 200%', // Permite que o gradiente se movam
-        }}
-      ></div>
-      <Card className="w-full max-w-sm sm:max-w-md bg-podcast-black/90 backdrop-blur-sm border border-podcast-border text-podcast-white shadow-2xl rounded-2xl overflow-hidden transition-all duration-300">
-        <div className="bg-podcast-purple h-2 w-full"></div>
-        <CardHeader className="text-center pt-6">
-          <div className="flex items-center justify-center mb-4">
-            <div className="bg-podcast-green p-3 rounded-full">
-              <Podcast className="text-podcast-black" size={32} />
-            </div>
+    <div className="min-h-screen flex">
+      {/* Painel Esquerdo (Branding e Citação) - Visível apenas em telas maiores */}
+      <div className="hidden md:flex md:w-1/2 bg-podcast-purple relative p-8 flex-col justify-between text-podcast-white">
+        {/* Logo/Título no topo */}
+        <div className="flex items-center gap-3">
+          <div className="bg-white p-2 rounded-md">
+            <Podcast className="text-podcast-purple" size={28} />
           </div>
-          <CardTitle className="text-3xl font-bold text-podcast-white">PremiumCast</CardTitle>
-          <p className="text-podcast-gray mt-2">
-            {authView === 'sign_in' 
-              ? 'Acesse sua conta para continuar' 
-              : 'Crie uma conta para começar'}
-          </p>
-        </CardHeader>
-        <CardContent className="p-6 pt-2">
-          {authView === 'sign_in' ? (
-            <CustomSignInForm onSwitchToSignUp={() => setAuthView('sign_up')} />
-          ) : (
-            <CustomSignUpForm onSwitchToSignIn={() => setAuthView('sign_in')} />
-          )}
-        </CardContent>
-      </Card>
+          <div>
+            <h1 className="text-2xl font-bold">DesavançaCast</h1>
+            <p className="text-sm text-podcast-white/80">Seu Podcast de Produtividade</p>
+          </div>
+        </div>
+
+        {/* Citação no centro */}
+        <div className="text-xl font-semibold italic max-w-md mx-auto text-center">
+          <p>"O mundo não precisa de mais um livro sobre produtividade perfeita. Precisa de um manual para quem vive no caos."</p>
+        </div>
+
+        {/* Copyright no rodapé */}
+        <div className="text-xs text-podcast-white/60">
+          © {currentYear} DesavançaCast
+        </div>
+      </div>
+
+      {/* Painel Direito (Formulários de Autenticação) */}
+      <div className="w-full md:w-1/2 bg-white flex items-center justify-center p-4 sm:p-8">
+        <Card className="w-full max-w-sm sm:max-w-md bg-white border-none shadow-lg rounded-xl overflow-hidden">
+          <CardHeader className="text-center pt-6">
+            <CardTitle className="text-3xl font-bold text-gray-900">
+              {authView === 'sign_in' ? 'Acesse sua conta' : 'Crie sua conta gratuita'}
+            </CardTitle>
+            <p className="text-gray-600 mt-2">
+              {authView === 'sign_in'
+                ? 'Bem-vindo de volta! Faça login para continuar.'
+                : 'Comece sua jornada na produtividade caótica hoje mesmo.'}
+            </p>
+          </CardHeader>
+          <CardContent className="p-6 pt-2">
+            {/* Placeholder para o botão Google */}
+            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-2 h-11 text-gray-700 border-gray-300 hover:bg-gray-50">
+              {/* Se você tiver um ícone do Google, pode adicioná-lo aqui */}
+              Continuar com Google
+            </Button>
+            <div className="relative flex justify-center text-xs uppercase my-6">
+              <span className="bg-white px-2 text-gray-500">ou</span>
+              <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-gray-200" />
+            </div>
+
+            {authView === 'sign_in' ? (
+              <CustomSignInForm onSwitchToSignUp={() => setAuthView('sign_up')} />
+            ) : (
+              <CustomSignUpForm onSwitchToSignIn={() => setAuthView('sign_in')} />
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
